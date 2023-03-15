@@ -1,4 +1,3 @@
-<div
-  class="-z-1 absolute center bg-gradiant-to-r from-violet-500 to-fushia-500"
-/>
-<slot />
+<div class="bg-purple-900 text-white min-h-screen">
+  <slot />
+</div>
