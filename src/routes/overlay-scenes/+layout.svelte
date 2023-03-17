@@ -1,14 +1,9 @@
 <section class="h-[100vh]">
-  <video
-    class="absolute w-full h-full object-cover -z-10"
-    muted
-    autoplay
-    loop
-    playsinline
-    disablepictureinpicture
-  >
-    <source src="/assets/BGVid.mp4" />
-  </video>
+  <div>
+    <div
+      class="bg-[url('/assets/BGVid.gif')] fixed bg-fixed top-0 bottom-0 left-0 right-0 -z-10 blur scale-105 bg-centered"
+    />
 
-  <slot />
+    <slot />
+  </div>
 </section>
