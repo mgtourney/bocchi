@@ -1,6 +1,6 @@
 <script lang="ts">
   import { tweened } from "svelte/motion";
-  let timer = tweened(60);
+  let timer = tweened(15);
 
   // Decrement timer each second
   let interval = setInterval(() => {
@@ -18,18 +18,27 @@
     // redirect to the next scene (tbd)
     window.location.href = "/overlay-scenes/starting-soon";
   }
+
+  function getAnimation(minutes: number, seconds: number) {
+    if (minutes > 0) return;
+
+    switch (true) {
+      case seconds <= 10 && seconds > 5:
+        return "animate-pulse text-red-500";
+      case seconds <= 5 && seconds > 0:
+        return "animate-ping text-red-500";
+      case seconds === 0:
+        return "animate-pulse text-red-500";
+      default:
+        return "";
+    }
+  }
 </script>
 
 <div class="flex flex-col justify-center items-center h-[100vh]">
   <div class="bg-black bg-opacity-70 p-16 rounded-xl text-center text-white">
     <p class="text-8xl font-bold">Starting Soon</p>
-    <p
-      class="text-[9rem] font-bold
-        {minutes === 0 && seconds <= 15 ? 'text-red-500 animate-pulse' : ''}
-        {minutes === 0 && seconds <= 10 ? 'text-red-500 animate-ping' : ''}
-        {minutes === 0 && seconds === 0 ? 'text-red-800' : ''}
-        "
-    >
+    <p class="text-[9rem] font-bold {getAnimation(minutes, seconds)}">
       {minutes < 10 ? "0" + minutes : minutes}:{seconds < 10
         ? "0" + seconds
         : seconds}

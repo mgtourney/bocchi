@@ -1,10 +1,20 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { scenes } from "./data";
+  import { io } from "$lib/realtime";
+  // onMount(() => {
+  //   io.on("message", message => { // Listen to the message event
+  //     messages = [...messages, message]
+  //   })
+  // })
 
   function changeScene(e: Event) {
     if (e.target === null) return;
-    goto(`/overlay-scenes${e.target.id}`);
+    console.log(e.target.id);
+    io.emit("message", {
+      type: "ChangeScene",
+      page: `${e.target.id}`
+    })
   }
 </script>
 
