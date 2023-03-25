@@ -40,7 +40,7 @@ export const getToken = (code: string, state: string) => {
   }
 }
 
-export const getAuthCode = () => {
+export function getAuthCode() {
   const userState = nonce;
   setContext('discordState', userState);
   throw redirect(307, oauth2.generateAuthUrl({
