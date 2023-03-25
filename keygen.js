@@ -7,9 +7,14 @@ if (!fs.existsSync('.env.json')) {
 
 let envfile = JSON.parse(fs.readFileSync('.env.json', 'utf8'));
 
-const secrets = [crypto.randomBytes(32).toString('hex'), crypto.randomBytes(32).toString('hex')];
-console.log('Generated session secret keys:', secrets);
+const secret = crypto.randomBytes(32).toString('hex');
+console.log('Generated session secret key:', secret);
+const iv = crypto.randomBytes(16).toString('hex');
+console.log('Generated session initialisation vector:', iv);
 
-envfile.cookieKeys = secrets;
+envfile.encryption = {
+  key: secret,
+  iv: iv
+};
 
 fs.writeFileSync('.env.json', JSON.stringify(envfile, null, 2));

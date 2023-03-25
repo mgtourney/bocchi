@@ -1,6 +1,6 @@
 import adapter from '@sveltejs/adapter-auto';
 import { vitePreprocess } from '@sveltejs/kit/vite';
-//import { cookieSessionMiddleware } from 'src/lib/cookieSession';
+
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -8,9 +8,6 @@ const config = {
 	// for more information about preprocessors
 	preprocess: vitePreprocess(),
 
-	//middleware: [
-	//	cookieSessionMiddleware()
-	//],
 
 	kit: {
 		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
