@@ -10,7 +10,7 @@
 		io.on("message", (msg) => {
 			if(!msg.type === "ChangeScene") { return; }
 			if(!msg.page) { return; }
-      goto(`/overlay-scenes/${msg.page}`);
+      goto(`/scenes/${msg.page}`);
 		})
 	})
 </script>
@@ -23,6 +23,7 @@
 		loop
 		muted
 		playsinline
+		disablePictureInPicture
 		src="/assets/BGVid.mp4"
 	/>
 

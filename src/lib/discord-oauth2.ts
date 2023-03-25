@@ -14,7 +14,7 @@ export const isUserAllowed = (encryptedToken: string) => {
   const token = decrypt(encryptedToken);
 
   oauth2.getUser(token).then((userObject) => {
-    if(!userObject.id) {
+    if (!userObject.id) {
       return false;
     }
     return env.userList.includes(userObject.id);
@@ -31,7 +31,7 @@ export const getToken = (code: string, state: string) => {
       code: code,
       scope: "identify",
     }).then((response) => {
-      if(!response.access_token) {
+      if (!response.access_token) {
         throw redirect(307, '/overlay-scenes');
       } else {
         return encrypt(response.access_token);
