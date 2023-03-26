@@ -61,7 +61,8 @@
   }
 
   .acc-text {
-    font-style: bold;
+    font-family: sans-serif;
+    font-style: normal;
     font-weight: 900;
     font-size: 56px;
     line-height: 50px;

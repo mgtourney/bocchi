@@ -1,9 +1,10 @@
 <script lang="ts">
   import ScoreLine from "$lib/components/ScoreLine.svelte";
-  import GameView from "$lib/components/GameView/GameView.svelte";
+  import GameView from "$lib/components/gameview/GameView.svelte";
   import DiffBar from "$lib/components/DiffBar.svelte";
   import ScoreCluster from "$lib/components/ScoreCluster.svelte";
   import TeamInfo from "$lib/components/TeamInfo.svelte";
+  import SongTitle from "$lib/components/SongTitle.svelte";
 
   let globalScale = 0.412;
 
@@ -11,15 +12,15 @@
 
   setInterval(() => {
     diff = diff - 5;
-  }, 1000);
+  }, 5000);
 </script>
 
 <div class="flex-col w-full h-full">
   <DiffBar bind:diff />
   <div class="flex items-center justify-center">
     <div class="flex-col">
-      <GameView playerName="!!!" scale={globalScale} muted={true} pos={0} />
-      <GameView playerName="!!!" scale={globalScale} muted={true} pos={1} />
+      <GameView playerName="Dietah" scale={globalScale} muted={true} pos={0} />
+      <GameView playerName="Luposity" scale={globalScale} muted={false} pos={1} />
     </div>
 
     <div class="flex-col w-full">
@@ -39,13 +40,16 @@
     </div>
 
     <div class="flex-col">
-      <GameView playerName="!!!" scale={globalScale} muted={true} pos={2} />
-      <GameView playerName="!!!" scale={globalScale} muted={true} pos={3} />
+      <GameView playerName="kinpa2" scale={globalScale} muted={true} pos={2} />
+      <GameView playerName="Shonzo" scale={globalScale} muted={true} pos={3} />
     </div>
   </div>
   <div class="flex items-center justify-center">
-    <TeamInfo pos={0} />
+    <TeamInfo pos={0} team1PfP={"https://i.imgur.com/X29Xuha.png"}/>
     <div class="w-full"/>
     <TeamInfo pos={1} />
+  </div>
+  <div class="flex h-full items-center justify-center">
+    <SongTitle songName="Danzai Democracy" songDiff="Expert"/>
   </div>
 </div>

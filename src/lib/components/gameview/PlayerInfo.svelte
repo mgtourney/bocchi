@@ -16,13 +16,13 @@
   <div class="relative bottom-[105px] w-0 h-0">
     <div
       class="flex flex-row items-center rounded-xl p-5 space-x-3
-        shadow-xl absolute w-[790px] h-[90px]"
+        absolute w-[790px] h-[90px]"
     >
       <!-- Profile Picture -->
       <img
         src={data == null ? "https://upload.wikimedia.org/wikipedia/commons/a/aa/TwibrightLinksTestCard.png" : data.profilePicture}
         alt="bobross"
-        class="rounded-xl w-[80px] h-[80px] border-gray-700 border-4 shadow-xl bg-opacity-30"
+        class="rounded-[15px] w-[70px] h-[70px] border-gray-700 border-[3px] shadow-xl bg-opacity-30"
       />
 
       <!-- Flag  -->
@@ -32,11 +32,11 @@
             ? "https://cdn.ipregistry.co/flags/twemoji/aq.svg"
             : `https://cdn.ipregistry.co/flags/twemoji/${data.country.toLowerCase()}.svg`}
           alt={data == null ? "" : data.country}
-          class="w-8"
+          class="w-6"
         />
 
         <!-- Name -->
-        <h1 class="text-4xl font-bold text-white text-ellipsis">
+        <h1 class="text-3xl leading-10 font-bold text-[#FFFFFFC0] text-ellipsis">
           {data == null ? "Loading..." : data.name}
         </h1>
       </div>
@@ -49,13 +49,13 @@
 <div class="relative bottom-[105px] w-0 h-0 float-right right-[790px]">
     <div
       class="flex flex-row-reverse items-center rounded-xl p-5 space-x-3
-        shadow-xl absolute w-[790px] h-[90px] space-x-reverse"
+        absolute w-[790px] h-[90px] space-x-reverse"
     >
       <!-- Profile Picture -->
       <img
         src={data == null ? "https://upload.wikimedia.org/wikipedia/commons/a/aa/TwibrightLinksTestCard.png" : data.profilePicture}
         alt="bobross"
-        class="rounded-xl w-[80px] h-[80px] border-gray-700 border-4 shadow-xl bg-opacity-30"
+        class="rounded-[15px] w-[70px] h-[70px] border-gray-700 border-[3px] shadow-xl bg-opacity-30"
       />
 
       <!-- Flag  -->
@@ -65,11 +65,11 @@
             ? "https://cdn.ipregistry.co/flags/twemoji/aq.svg"
             : `https://cdn.ipregistry.co/flags/twemoji/${data.country.toLowerCase()}.svg`}
           alt={data == null ? "" : data.country}
-          class="w-8"
+          class="w-6"
         />
 
         <!-- Name -->
-        <h1 class="text-4xl font-bold text-white text-ellipsis">
+        <h1 class="text-3xl leading-10 font-bold text-[#FFFFFFC0] text-ellipsis">
           {data == null ? "Loading..." : data.name}
         </h1>
       </div>

@@ -17,5 +17,5 @@
   {width}
   frameborder="0"
   scrolling="no"
-  class="shadow-lg {style}"
+  class="{style}"
 />
