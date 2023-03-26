@@ -1,27 +1,51 @@
 <script lang="ts">
   import ScoreLine from "$lib/components/ScoreLine.svelte";
-  import StreamView from "$lib/components/gameview/StreamView.svelte";
+  import GameView from "$lib/components/GameView/GameView.svelte";
   import DiffBar from "$lib/components/DiffBar.svelte";
-  let diff: number = 20;
+  import ScoreCluster from "$lib/components/ScoreCluster.svelte";
+  import TeamInfo from "$lib/components/TeamInfo.svelte";
 
-  setTimeout(() => {
-    diff = 50;
-  }, 1000)
+  let globalScale = 0.412;
+
+  let diff: number = 100;
+
+  setInterval(() => {
+    diff = diff - 5;
+  }, 1000);
 </script>
 
-<div class="flex-col w-full">
-  <DiffBar bind:diff/>
-  <div class="flex justify-center items-center">
+<div class="flex-col w-full h-full">
+  <DiffBar bind:diff />
+  <div class="flex items-center justify-center">
     <div class="flex-col">
-      <StreamView playerName="dexter_bs" scale={0.35} muted={false}/>
-      <StreamView playerName="knexfreak32" scale={0.35} muted={true}/>
+      <GameView playerName="!!!" scale={globalScale} muted={true} pos={0} />
+      <GameView playerName="!!!" scale={globalScale} muted={true} pos={1} />
     </div>
-    <div class="flex-col w-full">
 
+    <div class="flex-col w-full">
+      <div class="flex m-10 mb-28">
+        <ScoreCluster />
+        <div class="flex-grow" />
+      </div>
+      <div class="flex mx-7">
+        <ScoreLine points={1} />
+        <div class="flex-grow" />
+        <ScoreLine points={2} />
+      </div>
+      <div class="flex m-10 mt-28">
+        <div class="flex-grow" />
+        <ScoreCluster flipped={true} />
+      </div>
     </div>
+
     <div class="flex-col">
-      <StreamView playerName="litlmaiden" scale={0.35} muted={true}/>
-      <StreamView playerName="sckuffles" scale={0.35} muted={true}/>
+      <GameView playerName="!!!" scale={globalScale} muted={true} pos={2} />
+      <GameView playerName="!!!" scale={globalScale} muted={true} pos={3} />
     </div>
+  </div>
+  <div class="flex items-center justify-center">
+    <TeamInfo pos={0} />
+    <div class="w-full"/>
+    <TeamInfo pos={1} />
   </div>
 </div>

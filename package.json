@@ -35,7 +35,7 @@
 	"dependencies": {
 		"socket.io": "^4.6.1",
 		"socket.io-client": "^4.6.1",
-		"tournament-assistant-client": "^0.9.1",
+		"tournament-assistant-client": "^0.9.2",
 		"tsparticles": "^2.9.3"
 	}
 }
