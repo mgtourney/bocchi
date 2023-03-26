@@ -3,19 +3,18 @@
 	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
 	import PageTransition from '$lib/components/PageTransition.svelte';
-	import type { LayoutServerData } from './$types';
-	export let data: LayoutServerData;
+	export let data;
 
 	onMount(() => {
 		io.on("message", (msg) => {
-			if(!msg.type === "ChangeScene") { return; }
+			if(msg.type !== "ChangeScene") { return; }
 			if(!msg.page) { return; }
       goto(`/scenes/${msg.page}`);
 		})
 	})
 </script>
 
-<section class="flex flex-col justify-center items-center">
+<div class="flex-col justify-center items-center">
 	<div class="fixed top-0 left-0 w-full h-full z-[-2] bg-stone-900" />
 	<video id="bgvid"
 		class="object-cover w-full h-full fixed top-0 left-0 z-[-1] filter brightness-50"
@@ -31,7 +30,7 @@
 	<PageTransition pathname={data.pathname}>
 		<slot />
 	</PageTransition>
-</section>
+</div>
 
 <style>
 	#bgvid {
