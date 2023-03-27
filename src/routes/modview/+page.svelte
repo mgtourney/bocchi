@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { scenes } from "./data";
-  import { io } from "$lib/realtime";
+  import { scenes } from "$lib/constants";
   import Particles from "svelte-particles";
-  import SettingsModal from "$lib/components/SettingsModal.svelte"
 	import { loadFull } from 'tsparticles';
   import type { Engine } from "tsparticles-engine";
+  import { goto } from "$app/navigation";
 
   let liveButton: Element;
   
@@ -16,19 +15,27 @@
       await loadFull(engine);
   };
 
-  function changeScene(e: any) {
-    console.log(e.target.id)
-    if (e.target === null) return;
-    if (liveButton != undefined && liveButton != null) { liveButton.classList.remove("bg-red-500") }
+  // function changeScene(e: any) {
+  //   console.log(e.target.id)
+  //   if (e.target === null) return;
+  //   if (liveButton != undefined && liveButton != null) { liveButton.classList.remove("bg-red-500") }
 
-    liveButton = e.target
-    liveButton.classList.add("bg-red-500")
+  //   liveButton = e.target
+  //   liveButton.classList.add("bg-red-500") 
     
-    io.emit("message", {
-      type: "ChangeScene",
-      page: `${e.target.id}`,
-      data: {},
-    })
+  //   io.emit("message", {
+  //     type: "ChangeScene",
+  //     page: `${e.target.id}`,
+  //     data: {},
+  //   })
+
+    // function getCurrentMatches() {
+    //   // 
+    // }
+  // }
+  function changePage(e: any) {
+    goto(`/modview/${e.target.id!}`);
+    return null;
   }
 </script>
 
@@ -44,7 +51,7 @@
       <h1 class="text-4xl font-bold shadow-md">Mod View</h1>
       <div class="flex flex-row items-center justify-center">
         {#each scenes as scene}
-        <button id={scene.id} on:click={changeScene} class="bg-purple-500 text-white font-bold py-2 px-4 rounded m-2 ease-in-out duration-200 hover:bg-purple-600">
+        <button id={scene.id} on:click={changePage} class="bg-purple-500 text-white font-bold py-2 px-4 rounded m-2 ease-in-out duration-200 hover:bg-purple-600">
           {scene.name}
         </button>
         {/each}
@@ -52,10 +59,6 @@
     </div>
   </div>
 </div>
-
-<SettingsModal bind:showModal bind:modalData>
-
-</SettingsModal>
 
 <style>
   #particles {

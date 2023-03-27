@@ -1,11 +1,8 @@
 <script lang="ts">
   export let pos: number = 0;
-  export let team1PfP: string = "https://upload.wikimedia.org/wikipedia/commons/a/aa/TwibrightLinksTestCard.png";
-  export let team1Name: string = "Team Danish Dynamite";
-  export let team1Members: string = "Loading...";
-  export let team2PfP: string = "https://upload.wikimedia.org/wikipedia/commons/a/aa/TwibrightLinksTestCard.png";
-  export let team2Name: string = "Team Cool-Aid";
-  export let team2Members: string = "Loading...";
+  export let avatar: string = "/assets/loading.png";
+  export let name: string = "Loading...";
+  export let members: string = "Loading...";
 </script>
 
 {#if pos == 0}
@@ -14,7 +11,7 @@
   >
     <!-- Profile Picture -->
     <img
-      src={team1PfP}
+      src={avatar}
       alt="bobross"
       class="rounded-[34px] w-[102px] h-[102px] m-4 border-[#FFFFFF30] border-[6px] bg-opacity-50"
     />
@@ -22,9 +19,9 @@
     <!-- Name -->
     <div class="flex flex-col px-4 w-[900px]">
       <h1 class="team-name text-ellipsis">
-        {team1Name}
+        {name}
       </h1>
-      <h2 class="team-members text-ellipsis">{team1Members}</h2>
+      <h2 class="team-members text-ellipsis">{members}</h2>
     </div>
   </div>
 {:else}
@@ -34,7 +31,7 @@
   >
     <!-- Profile Picture -->
     <img
-      src={team2PfP}
+      src={avatar}
       alt="bobross"
       class="rounded-[34px] w-[102px] h-[102px] m-4 border-[#FFFFFF30] border-[6px] bg-opacity-50"
     />
@@ -42,12 +39,13 @@
     <!-- Name -->
     <div class="flex flex-col items-end justify-center px-4 w-[900px]">
       <h1 class="team-name text-ellipsis">
-        {team2Name}
+        {name}
       </h1>
-      <h2 class="team-members text-ellipsis">{team2Members}</h2>
+      <h2 class="team-members text-ellipsis">{members}</h2>
     </div>
   </div>
 {/if}
+
 <style>
   .team-name {
     font-style: normal;

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from "$app/stores";
 	import { io } from "$lib/realtime";
 	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
@@ -9,8 +10,11 @@
 		io.on("message", (msg) => {
 			if(msg.type !== "ChangeScene") { return; }
 			if(!msg.page) { return; }
-      goto(`/scenes/${msg.page}`);
+      goto(`/scenes/${msg.page}/?data=${JSON.stringify(msg.data)}`);
 		})
+		if($page.route.id == "/scenes") {
+			io.emit("gotoCurrentScene");
+		}
 	})
 </script>
 

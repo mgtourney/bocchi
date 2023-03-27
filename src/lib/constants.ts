@@ -1,3 +1,7 @@
+// this is the future
+// glob.py
+
+export const GameDifficulty = ["Easy", "Normal", "Hard", "Expert", "Expert+"];
 export const scenes = [
   {
     name: "Starting Soon",
@@ -15,4 +19,4 @@ export const scenes = [
     name: "Pre 1v1",
     id: "pre-1v1",
   },
-]
+];

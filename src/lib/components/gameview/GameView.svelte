@@ -1,6 +1,6 @@
 <script lang="ts">
-  import StreamView from "$lib/components/gameview/StreamView.svelte"
-  import PlayerInfo from "$lib/components/gameview/PlayerInfo.svelte";
+  import StreamView from "$lib/components/GameView/StreamView.svelte"
+  import PlayerInfo from "$lib/components/GameView/PlayerInfo.svelte";
 
   export let playerName = "bobross";
   export let scale: number = 1;

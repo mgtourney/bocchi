@@ -9,22 +9,27 @@
   let missCountLocal = tweened(missCount);
   let accuracyLocal = tweened(accuracy);
 
-  const formattedScore = writable(score.toLocaleString().replace(/\,/g, ' '));
-  $: formattedScore.set(score.toLocaleString().replace(/\,/g, ' '));
+  const formattedScore = writable(score.toLocaleString().replace(/\,/g, " "));
+  $: formattedScore.set(score.toLocaleString().replace(/\,/g, " "));
 </script>
 
 <div class="flex-col">
   <div class="flex">
     {#if !flipped}
       <h1 class="m-2 misses">{$missCountLocal}</h1>
-      <h1 class="flex-grow m-1 misses-text unflip">MISS{($missCountLocal == 2) ? '' : 'ES'}</h1>
+      <h1 class="flex-grow m-1 misses-text unflip">
+        MISS{$missCountLocal == 2 ? "" : "ES"}
+      </h1>
     {/if}
-    
+
     {#if flipped}
-      <h1 class="flex-grow m-1 misses-text flip">MISS{($missCountLocal == 2) ? '' : 'ES'}</h1>
+      <h1 class="flex-grow m-1 misses-text flip">
+        MISS{$missCountLocal == 2 ? "" : "ES"}
+      </h1>
       <h1 class="m-2 misses">{$missCountLocal}</h1>
     {/if}
   </div>
+
   {#if flipped}
     <h1 class="m-2 acc-text flip">{$accuracyLocal}%</h1>
     <h1 class="m-2 score-text flip">{$formattedScore}</h1>
@@ -33,13 +38,14 @@
     <h1 class="m-2 score-text unflip">{$formattedScore}</h1>
   {/if}
 </div>
+
 <style>
   .misses {
     font-style: normal;
     font-weight: 900;
     font-size: 56px;
     line-height: 0px;
-    color: #FFFFFF;
+    color: #ffffff;
   }
 
   .misses-text {
@@ -47,7 +53,7 @@
     font-weight: 900;
     font-size: 26px;
     line-height: 30px;
-    color: #FFFFFF80;
+    color: #ffffff80;
   }
 
   .flip {
@@ -67,7 +73,7 @@
     font-size: 56px;
     line-height: 50px;
     display: flex;
-    color: #FFFFFF;
+    color: #ffffff;
   }
 
   .score-text {
@@ -75,6 +81,6 @@
     font-weight: 900;
     font-size: 26px;
     line-height: 30px;
-    color: #FFFFFF80;
+    color: #ffffff80;
   }
 </style>

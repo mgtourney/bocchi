@@ -1,7 +1,8 @@
 <script lang="ts">
   import { getPlayerInfoFull, type PlayerInfoFull } from "$lib/scoresaber";
   import { onMount } from "svelte";
-  import MiniScoreCluster from "./MiniScoreCluster.svelte";
+  import MiniScoreCluster from "$lib/components/GameView/MiniScoreCluster.svelte";
+
   export let playerId = "-1";
   export let pos: number;
 
@@ -20,9 +21,9 @@
     >
       <!-- Profile Picture -->
       <img
-        src={data == null ? "https://upload.wikimedia.org/wikipedia/commons/a/aa/TwibrightLinksTestCard.png" : data.profilePicture}
+        src={data == null ? "/assets/loading.png" : data.profilePicture}
         alt="bobross"
-        class="rounded-[15px] w-[70px] h-[70px] border-gray-700 border-[3px] shadow-xl bg-opacity-30"
+        class="rounded-[15px] w-[70px] h-[70px] border-gray-700 border-[3px] shadow-xl bg-opacity-30 ease-in-out duration-500"
       />
 
       <!-- Flag  -->
@@ -53,9 +54,9 @@
     >
       <!-- Profile Picture -->
       <img
-        src={data == null ? "https://upload.wikimedia.org/wikipedia/commons/a/aa/TwibrightLinksTestCard.png" : data.profilePicture}
+        src={data == null ? "/assets/loading.png" : data.profilePicture}
         alt="bobross"
-        class="rounded-[15px] w-[70px] h-[70px] border-gray-700 border-[3px] shadow-xl bg-opacity-30"
+        class="rounded-[15px] w-[70px] h-[70px] border-gray-700 border-[3px] shadow-xl bg-opacity-30 ease-in-out duration-500"
       />
 
       <!-- Flag  -->
@@ -65,11 +66,11 @@
             ? "https://cdn.ipregistry.co/flags/twemoji/aq.svg"
             : `https://cdn.ipregistry.co/flags/twemoji/${data.country.toLowerCase()}.svg`}
           alt={data == null ? "" : data.country}
-          class="w-6"
+          class="w-6 ease-in-out duration-500"
         />
 
         <!-- Name -->
-        <h1 class="text-3xl leading-10 font-bold text-[#FFFFFFC0] text-ellipsis">
+        <h1 class="text-3xl leading-10 font-bold text-[#FFFFFFC0] text-ellipsis ease-in-out duration-500">
           {data == null ? "Loading..." : data.name}
         </h1>
       </div>

@@ -2,6 +2,12 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import { Server } from 'socket.io';
 
+let lastScene = {
+  type: "ChangeScene",
+  page: "starting-soon",
+  data: {}
+};
+
 export default defineConfig({
   plugins: [
     sveltekit(),
@@ -16,7 +22,13 @@ export default defineConfig({
 
         io.on('connection', (socket) => {
           socket.on('message', (message) => {
-            socket.broadcast.emit('message', message)
+            if (message.type === "ChangeScene") {
+              lastScene = message;
+            }
+            socket.broadcast.emit('message', message);
+          })
+          socket.on('gotoCurrentScene', () => {
+            socket.emit('message', lastScene);
           })
         })
 

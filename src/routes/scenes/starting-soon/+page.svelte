@@ -1,6 +1,15 @@
 <script lang="ts">
   import { tweened } from "svelte/motion";
-  let timer = tweened(15);
+  const urlParams = new URLSearchParams(window.location.search);
+  const JsonData = urlParams.get('data');
+  let data = JSON.parse(JsonData!);
+  let timerDelta = 60;
+  if (data != null) {
+    let currentDate = new Date();
+    let timerDate = new Date(data.startIn);
+    timerDelta = Math.round(Math.abs(currentDate.getTime() - timerDate.getTime()) / 1000);
+  }
+  let timer = tweened(timerDelta);
 
   // Decrement timer each second
   let interval = setInterval(() => {
