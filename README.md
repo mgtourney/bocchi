@@ -1,38 +1,53 @@
-# create-svelte
+<div id="container">
+<img id="logo" src="https://user-images.githubusercontent.com/24845326/228433729-c760fbbf-6d3f-43c0-bf72-fc922cbfb1dd.png" height="200" alt="dead booccchi_irl">
+<h1 id="title">The Bocchi Stack</h1>
+<p id="description">
+A professional Beat Saber Tournament overlay written in <a href="https://kit.svelte.dev/">SvelteKit</a>.<br>
+It is currently in development and is used in the <a href="https://magnesium.gg/">Magnesium Tournament</a>.
+</p>
+</div>
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+<style>
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 800px;
+    padding: 0 20px;
+}
 
-## Creating a project
+#logo {
+    height: 200px;
+    border-radius: 15%;
+}
 
-If you're seeing this, you've probably already done this step. Congrats!
+#title {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    padding: 10px 0;
+}
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+#description {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+}
+</style>
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
 
-## Developing
+## Credits
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- [Checksum](https://github.com/ChecksumDev)
+- [Sargon64](https://github.com/Sargon64)
+- [Skkeye](https://github.com/Skkeye)
 
-```bash
-npm run dev
+## For the love of God
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Please do not look at the code. It's a mess. I'm sorry.

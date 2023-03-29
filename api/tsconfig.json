@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */ // "preserveSymlinks": true,                         /* Disable resolving symlinks to their realpath. This correlates to the same flag in node. */
+    "forceConsistentCasingInFileNames": true, /* Ensure that casing is correct in imports. */ // "lib": [],                                        /* Specify a set of bundled library declaration files that describe the target runtime environment. */
+    "module": "CommonJS", /* Specify what module code is generated. */
+    "outDir": "dist",
+    "skipLibCheck": true, /* Skip type checking all .d.ts files. */ /* Type Checking */
+    "strict": true, /* Enable all strict type-checking options. */ /* Visit https://aka.ms/tsconfig to read more about this file */
+    "target": "ESNext", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+  },
+}

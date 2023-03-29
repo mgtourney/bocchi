@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator typegraphql {
+  provider = "typegraphql-prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Team {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  logo      String   @default("/assets/loading.png")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Socials {
+  steam   String   @id
+  discord String   @unique
+  twitch  String   @unique
+  Player  Player[]
+}
+
+model Player {
+  steam     String   @id
+  name      String
+  team      Int?
+  socials   Socials? @relation(fields: [steam], references: [steam])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
