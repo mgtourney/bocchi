@@ -6,10 +6,9 @@
   import TeamInfo from "$lib/components/TeamInfo.svelte";
   import SongTitle from "$lib/components/SongTitle.svelte";
   import { GameDifficulty } from "$lib/constants";
-  import type { Models, Packets, TAEvents } from "tournament-assistant-client";
+  import type { Models, Packets } from "tournament-assistant-client";
   import type { PageData } from "./$types";
   import { io } from "$lib/socket";
-  import { goto } from "$app/navigation";
   import { onMount } from "svelte";
 
   export let data: PageData;
@@ -25,8 +24,8 @@
   let team1: Models.User[] = [];
   let team2: Models.User[] = [];
 
-  let team2GUIDS;
-  let team1GUIDS;
+  let team2GUIDS: string | string[];
+  let team1GUIDS: string | string[];
   let team1accMap: Map<string, number> = new Map();
   let team2accMap: Map<string, number> = new Map();
   let team1acc: number = 100;

@@ -2,6 +2,6 @@ import type { PageLoad } from './$types';
 
 export const load = (({ params }) => {
   return {
-    matchId: params.slug
+    timestampEndTime: params.slug
   };
 }) satisfies PageLoad;

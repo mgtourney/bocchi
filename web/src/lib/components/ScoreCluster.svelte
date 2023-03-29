@@ -7,8 +7,6 @@
   export let teamGUIDS: string[];
   export let flipped: Boolean = false;
 
-  // console.log(teamGUIDS);
-
   let missCounts: Map<string, number> = new Map();
   let accuracies: Map<string, number> = new Map();
   let scores: Map<string, number> = new Map();
@@ -16,10 +14,6 @@
   let missCountLocal = 0
   let accuracyLocal = 100
   let totalScore = 0;
-  // const formattedScore = writable(
-  //   totalScore.toLocaleString().replace(/\,/g, " ")
-  // );
-  // $: formattedScore.set(totalScore.toLocaleString().replace(/\,/g, " "));
 
   teamGUIDS.forEach((guid) => {
     missCounts.set(guid, 0);

@@ -6,8 +6,7 @@
     if (e.target == null) return;
     // console.log(e.target.id);
 
-    io.emit("message", {
-      type: "ChangeScene",
+    io.emit("ChangeScene", {
       page: "2v2",
       slug: `/${e.target.id}`,
     });

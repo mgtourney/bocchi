@@ -9,8 +9,6 @@
   
   export let playerGUID: string;
 
-  // console.log(playerGUID)
-
   io.on('realtimeScore', (score: Packets.Push.RealtimeScore) => {
     if (score.user_guid == playerGUID) {
       missCount = score.scoreTracker.notesMissed + score.scoreTracker.badCuts;

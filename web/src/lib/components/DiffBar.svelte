@@ -1,10 +1,15 @@
 <script lang="ts">
   import { tweened } from "svelte/motion";
+  import { tick } from "svelte";
   export let diff: number;
-  let barLengthR = tweened((diff >= 0) ? (100 - diff) / 2 : 50);
-  let barLengthL = tweened((diff < 0) ? (100 - Math.abs(diff)) / 2 : 50);
+
+  let barLengthR = tweened(0);
+  let barLengthL = tweened(0);
+
   $: barLengthR.set((diff >= 0) ? (100 - diff) / 2 : 50);
   $: barLengthL.set((diff < 0) ? (100 - Math.abs(diff)) / 2 : 50);
+  
+  $: tick();
 </script>
 
 <div class="flex w-full h-3">

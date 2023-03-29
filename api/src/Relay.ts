@@ -7,11 +7,15 @@ import {
 } from "tournament-assistant-client";
 import { Server } from "socket.io";
 
+class RelayState {
+  players: Map<string, string> = new Map(); // matchgu=d -> playerguid
+}
+
 export default class Relay {
   ta: Client;
   io: Server;
+  rstate: RelayState = new RelayState();
   lastScene: Object = {
-    type: "ChangeScene",
     page: `starting-soon`,
     slug: ""
   };
@@ -39,9 +43,9 @@ export default class Relay {
 
   initSocketIo() {
     this.io.on("connection", (socket) => {
-      socket.on("message", (msg) => {
+      socket.on("ChangeScene", (msg) => {
         this.lastScene = msg;
-        socket.broadcast.emit("message", msg);
+        socket.broadcast.emit("ChangeScene", msg);
       });
 
       socket.on("SetMatch", (matchId: string) => {

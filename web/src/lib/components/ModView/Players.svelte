@@ -121,8 +121,8 @@
           <tr>
             <td class="border p-2">{player.steam}</td>
             <td class="border p-2">{player.name}</td>
-            <td class="border p-2">{player.socials.twitch}</td>
-            <td class="border p-2">{player.socials.discord}</td>
+            <td class="border p-2">{player.socials?.twitch}</td>
+            <td class="border p-2">{player.socials?.discord}</td>
             <td class="border p-2">
               <button
                 class="bg-gray-800 rounded border border-gray-400"

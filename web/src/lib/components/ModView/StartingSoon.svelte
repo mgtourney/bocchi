@@ -1,5 +1,5 @@
 <script>
-  //import { io } from "$lib/socket";
+  import { io } from "$lib/socket";
 
 
   let timerMinutes = 10;
@@ -7,22 +7,31 @@
 
   function apply() {
     let currentDate = new Date();
-    currentDate.setSeconds((currentDate.getMinutes() * 60) + currentDate.getSeconds() + (timerMinutes * 60) + timerSeconds);
-    // io.emit("message", {
-    //   type: "ChangeScene",
-    //   page: "starting-soon",
-    //   slug: `/${currentDate.getTime()}`
-    // })
+    currentDate.setSeconds(currentDate.getSeconds() + timerSeconds);
+    currentDate.setMinutes(currentDate.getMinutes() + timerMinutes);
+
+    io.emit("ChangeScene", {
+      page: "starting-soon",
+      slug: `/${currentDate.getTime()}`
+    })
   }
 </script>
 
-<label>
-  <h1>Minutes</h1>
-  <input type="number" bind:value={timerMinutes} min="0" max="60" />
-</label>
-<label>
-  <h1>Seconds</h1>
-  <input type="number" bind:value={timerSeconds} min="0" max="59" />
-</label>
-
-<button on:click={apply}>Apply</button>
+<div class="flex flex-row items-center justify-center h-screen w-screen">
+  <div class="flex flex-col items-center justify-center bg-black rounded-xl p-16 text-white bg-opacity-30">
+    <fieldset>
+      <legend class="text-2xl font-bold mb-4 text-center">Starting Soon</legend>
+      <div class="flex flex-row items-center justify-center">
+        <label class="flex flex-col items-center justify-center mr-4">
+          <h1 class="text-xl">Minutes</h1>
+          <input class="text-2xl border bg-black  bg-opacity-60 text-white p-2" type="number" bind:value={timerMinutes} min="0" max="59" />
+        </label>
+        <label class="flex flex-col items-center justify-center ml-4">
+          <h1 class="text-xl">Seconds</h1>
+          <input class="text-2xl border bg-black bg-opacity-60 text-white p-2" type="number" bind:value={timerSeconds} min="0" max="59" />
+        </label>
+      </div>
+    </fieldset>
+    <button class="bg-black rounded border border-gray-400 p-2 mt-4" on:click={apply}>Apply</button>
+  </div>
+</div>

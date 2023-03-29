@@ -1,10 +1,18 @@
 <script lang="ts">
-	import { draw, fly } from 'svelte/transition';
-	export let pathname: string = '';
+  export let stinger: string;
+  export let delay: string;
 </script>
 
-{#key pathname}
-	<div in:fly={{ x: -10, duration: 500, delay: 500 }} out:fly={{ x: 5, duration: 500 }}>
-		<slot />
-	</div>
+{#key stinger}
+  <video
+    class="w-full h-full object-cover fixed top-0 left-0 z-50"
+    muted
+    autoplay
+    playsinline
+    disablePictureInPicture
+    src="/assets/stream_transition.webm"
+  />
+{/key}
+{#key delay}
+  <slot />
 {/key}

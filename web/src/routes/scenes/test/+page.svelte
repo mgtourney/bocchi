@@ -1,0 +1,1 @@
+<video src="/assets/stream_transition.webm" autoplay loop muted></video>

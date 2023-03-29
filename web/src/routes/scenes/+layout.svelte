@@ -4,20 +4,29 @@
 	import { onMount } from "svelte";
 	import PageTransition from '$lib/components/PageTransition.svelte';
   import { io } from "$lib/socket";
-	export let data;
+	let delay;
+	let stinger;
 
 	onMount(() => {
 		if($page.route.id == "/scenes") {
 			io.emit("getLastSceneChange");
 		}
 		io.on("sendLastSceneChange", (msg) => {
-			goto(`/scenes/${msg.page}${msg.slug}`);
+			stinger = msg.type;
+			setTimeout(() => {
+				delay = msg.type;
+				goto(`/scenes/${msg.page}${msg.slug}`);
+			}, 1000)	
 		})
-		io.on("message", (msg) => {
-			if(msg.type !== "ChangeScene") { return; }
-			// console.log(msg);
+
+		io.on("ChangeScene", (msg) => {
 			if(msg.page == null) { return; }
-			goto(`/scenes/${msg.page}${msg.slug}`);
+			
+			stinger = msg.type;
+			setTimeout(() => {
+				delay = msg.type;
+				goto(`/scenes/${msg.page}${msg.slug}`);
+			}, 1000)	
 		});
 	})
 </script>
@@ -35,7 +44,7 @@
 	/>
 
 	<!-- Use a slot to load in the content for the page -->
-	<PageTransition pathname={data.pathname}>
+	<PageTransition bind:stinger bind:delay>
 		<slot />
 	</PageTransition>
 </div>
