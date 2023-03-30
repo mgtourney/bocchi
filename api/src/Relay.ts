@@ -6,10 +6,7 @@ import {
   type TAEvents,
 } from "tournament-assistant-client";
 import { Server } from "socket.io";
-
-class RelayState {
-  players: Map<string, string> = new Map(); // matchgu=d -> playerguid
-}
+import { RelayState } from "./lib/RelayState";
 
 export default class Relay {
   ta: Client;
@@ -49,10 +46,12 @@ export default class Relay {
       });
 
       socket.on("SetMatch", (matchId: string) => {
-        let event = this.ta.State.matches.filter((e) => e.guid == matchId)[0];
-        if (event.associated_users.includes(this.ta.Self.guid)) return;
+        let event = this.ta.getMatch(matchId);
+        if (event == undefined) return;
 
+        if (event.associated_users.includes(this.ta.Self.guid)) return;
         event.associated_users.push(this.ta.Self.guid);
+
         this.ta.updateMatch(event);
       });
 
@@ -71,9 +70,8 @@ export default class Relay {
       "realtimeScore",
       (recv: TAEvents.PacketEvent<Packets.Push.RealtimeScore>) => {
         // console.log("realtimeScore", recv.data);
-        let delay = this.ta.State.users.filter(
-          (e) => e.guid == recv.data.user_guid
-        )[0].stream_delay_ms;
+        let delay = this.ta.getUser(recv.data.user_guid)?.stream_delay_ms;
+        if (delay == undefined) return;
 
         setTimeout(() => {
           this.io.emit("realtimeScore", recv.data.toObject());
