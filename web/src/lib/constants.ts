@@ -22,6 +22,10 @@ export const scenes = [
   {
     name: "Players",
     id: "players"
+  },
+  {
+    name: "Teams",
+    id: "teams"
   }
 ];
 

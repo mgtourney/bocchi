@@ -7,8 +7,10 @@
   let name: string = "";
   let twitch: string = "";
   let discord: string = "";
+  let team: number;
 
   let players: any = [];
+  let teams: any = [];
 
   function GetAllPlayers() {
     request(
@@ -18,6 +20,7 @@
     players {
       name
       steam
+      team
       socials {
         discord,
         twitch
@@ -37,13 +40,15 @@
     steam: string,
     name: string,
     twitch: string,
-    discord: string
+    discord: string,
+    team: number | null
   ) {
     let mutation = gql`
       mutation CreateOnePlayer($data: PlayerCreateInput!) {
         createOnePlayer(data: $data) {
           name
           steam
+          team
           socials {
             twitch
             steam
@@ -56,6 +61,7 @@
     let varible = {
       data: {
         name: name,
+        team: team,
         socials: {
           create: {
             twitch: twitch,
@@ -73,7 +79,7 @@
 
   function deletePlayer(steam: string) {
     let mutation = gql`
-      mutation DeleteOnePlayer($where: PlayerWhereUniqueInput!) {
+      mutation DeleteOnePlayer($where: PlayerWhereUniqueInput!, $socialsWhere: SocialsWhereUniqueInput!) {
         deleteOnePlayer(where: $where) {
           name
           steam
@@ -83,13 +89,22 @@
             discord
           }
         }
+        
+        deleteOneSocials(where: $socialsWhere) {
+          twitch
+          steam
+          discord
+        }
       }
     `;
 
     let varible = {
       where: {
-        steam: steam,
+        steam,
       },
+      socialsWhere: {
+        steam
+      }
     };
 
     GQL.request(mutation, varible).then((val:any ) => {
@@ -97,8 +112,25 @@
     });
   }
 
+  function getTeams() {
+    let query = gql`
+      query Query {
+        teams {
+          name
+          logo
+          id
+        }
+      }
+    `;
+
+    GQL.request(query, {}).then((val: any) => {
+      teams = val.teams;
+    });
+  }
+
   onMount(() => {
     GetAllPlayers();
+    getTeams();
   });
 </script>
 
@@ -111,6 +143,7 @@
         <tr>
           <th class="border p-2">Steam ID</th>
           <th class="border p-2">Name</th>
+          <th class="border p-2">Team</th>
           <th class="border p-2">Twitch</th>
           <th class="border p-2">Discord</th>
           <th class="border p-2">Actions</th>
@@ -121,6 +154,7 @@
           <tr>
             <td class="border p-2">{player.steam}</td>
             <td class="border p-2">{player.name}</td>
+            <td class="border p-2">{teams.filter((e) => e.id == player.team).flatMap((e) => e.name)}</td>
             <td class="border p-2">{player.socials?.twitch}</td>
             <td class="border p-2">{player.socials?.discord}</td>
             <td class="border p-2">
@@ -165,9 +199,16 @@
         placeholder="Discord"
         class="mb-2 bg-gray-800 rounded border border-gray-400"
       />
+      <label for="team_select">Select A Team</label>
+      <select bind:value={team} id="team_select" class="mb-2 bg-gray-800 rounded border border-gray-400" >
+        <option value={null}>No Team</option>
+        {#each teams as t}
+          <option value={t.id}>{t.name}</option>
+        {/each}
+      </select>
       <button
         class="bg-gray-800 rounded border border-gray-400"
-        on:click={() => addPlayer(steamid, name, twitch, discord)}
+        on:click={() => addPlayer(steamid, name, twitch, discord, team)}
         >Add Player</button
       >
     </div>

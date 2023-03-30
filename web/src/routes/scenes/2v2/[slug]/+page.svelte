@@ -10,6 +10,8 @@
   import type { PageData } from "./$types";
   import { io } from "$lib/socket";
   import { onMount } from "svelte";
+  import { gql } from "graphql-request";
+  import { GQL } from "$lib/constants";
 
   export let data: PageData;
 
@@ -30,6 +32,45 @@
   let team2accMap: Map<string, number> = new Map();
   let team1acc: number = 100;
   let team2acc: number = 100;
+
+  // please for the love of god end me.  - niko@velvet.moe
+  let qTeams: Map<string, any> = new Map();
+  let qTeam1: any;
+  let qTeam2: any;
+  let qTeam1Users: Set<string> = new Set();
+  let qTeam2Users: Set<string> = new Set();
+  let qTeam1UsersStr: string = "";
+  let qTeam2UsersStr: string = "";
+
+  function updateTeam(id: string) {
+    let query = gql`
+      query Query($where: PlayerWhereUniqueInput!) {
+        getPlayer(where: $where) {
+          team
+        }
+      }
+    `;
+    GQL.request(query, { where: { steam: id } }).then((val: any) => {
+      //console.log(val)
+      let query = gql`
+        query Query($where: TeamWhereUniqueInput!) {
+          getTeam(where: $where) {
+            name
+            logo
+          }
+        }
+      `;
+
+      GQL.request(query, { where: { id: val.getPlayer.team } }).then(
+        (val: any) => {
+          // console.log(val)
+          qTeams.set(id, val.getTeam);
+        }
+      );
+    }).catch(() => {
+      return;
+    });
+  }
 
   io.on("state", (state: any) => {
     match = state.matches.filter(
@@ -58,9 +99,23 @@
       team1 = players.filter(
         (e: Models.User) => e.team.id == "c99d666c-0bbb-4530-9803-0d2e1d6034e1"
       );
+      team1.forEach((e) => {
+        updateTeam(e.user_id);
+        qTeam1 = qTeams.get(e.user_id);
+        if(!qTeam1Users.has(e.name)) qTeam1Users.add(e.name);
+        qTeam1UsersStr = Array.from(qTeam1Users)[0] + " & " + Array.from(qTeam1Users)[1] // forgive my sins :3 - niko
+      });
+
       team2 = players.filter(
         (e: Models.User) => e.team.id == "c195776a-6307-4cc3-b6f2-f1f122c89c81"
       );
+      team2.forEach((e) => {
+        updateTeam(e.user_id);
+        qTeam2 = qTeams.get(e.user_id);
+        if(!qTeam2Users.has(e.name)) qTeam2Users.add(e.name);
+        qTeam2UsersStr = Array.from(qTeam2Users)[0] + " & " + Array.from(qTeam2Users)[1]
+      });
+
       team1GUIDS = team1.flatMap((e) => e.guid);
       team2GUIDS = team2.flatMap((e) => e.guid);
     }
@@ -68,7 +123,6 @@
 
   onMount(() => {
     let int = setInterval(() => {
-      // console.log(team1);
       if (match == undefined) {
         clearInterval(int);
         io.emit("getLastSceneChange");
@@ -143,9 +197,9 @@
     </div>
   </div>
   <div class="flex items-center justify-center">
-    <TeamInfo pos={0} avatar={"https://i.imgur.com/X29Xuha.png"} />
+    <TeamInfo pos={0} avatar={qTeam1 == undefined ? null : qTeam1.logo} name={qTeam1 == undefined ? "Loading..." : qTeam1.name} members={qTeam1UsersStr}/>
     <div class="w-full" />
-    <TeamInfo pos={1} avatar={"https://i.imgur.com/X29Xuha.png"} />
+    <TeamInfo pos={1} avatar={qTeam2 == undefined ? null : qTeam2.logo} name={qTeam2 == undefined ? "Loading..." : qTeam2.name} members={qTeam2UsersStr}/>
   </div>
   <div class="flex h-full items-center justify-center">
     <SongTitle bind:songName bind:songDiff />

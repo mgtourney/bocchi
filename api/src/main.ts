@@ -14,6 +14,9 @@ async function main() {
 
     const server = new ApolloServer({
         schema,
+        cors: {
+            origin: '*',
+        },
         context: ({ req, res }) => ({ req, res, prisma }),
     })
 

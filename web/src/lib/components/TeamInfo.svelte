@@ -1,8 +1,10 @@
 <script lang="ts">
   export let pos: number = 0;
-  export let avatar: string = "/assets/loading.png";
+  export let avatar: string;
   export let name: string = "Loading...";
   export let members: string = "Loading...";
+
+  if (avatar == null) avatar = "/assets/loading.png"
 </script>
 
 {#if pos == 0}
@@ -13,7 +15,7 @@
     <img
       src={avatar}
       alt="bobross"
-      class="rounded-[34px] w-[102px] h-[102px] m-4 border-[#FFFFFF30] border-[6px] bg-opacity-50"
+      class="rounded-[34px] w-[102px] h-[102px] m-4 border-[#FFFFFF30] border-[6px] bg-opacity-50 object-fill"
     />
 
     <!-- Name -->
