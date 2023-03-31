@@ -6,16 +6,12 @@ import {
   type TAEvents,
 } from "tournament-assistant-client";
 import { Server } from "socket.io";
-import { RelayState } from "./lib/RelayState";
+import { RelayState, type RTState } from "./lib/RelayState";
 
 export default class Relay {
   ta: Client;
   io: Server;
   rstate: RelayState = new RelayState();
-  lastScene: Object = {
-    page: `starting-soon`,
-    slug: ""
-  };
 
   constructor() {
     this.ta = new Client("Magnesium Overlay", {
@@ -32,63 +28,62 @@ export default class Relay {
       }
     });
 
-    this.initSocketIo();
-    this.initTA();
+    this.setSocketListeners();
+    this.setTAListeners();
 
     console.log("Successfully injected the Relay server.");
-  } // its broken because the rest of the overlay needs to be updated to reflect the new state shz, check the emits and I'll BRB
+  }
 
-  initSocketIo() {
+  setSocketListeners() {
     this.io.on("connection", (socket) => {
+      socket.emit("state", this.rstate.getState());
+
       socket.on("ChangeScene", (msg) => {
-        this.lastScene = msg;
+        this.rstate.setLastScene(msg);
         socket.broadcast.emit("ChangeScene", msg);
       });
 
-      socket.on("SetMatch", (matchId: string) => {
-        let event = this.ta.getMatch(matchId);
-        if (event == undefined) return;
-
-        if (event.associated_users.includes(this.ta.Self.guid)) return;
-        event.associated_users.push(this.ta.Self.guid);
-
-        this.ta.updateMatch(event);
-      });
-
       socket.on("getLastSceneChange", () => {
-        socket.emit("sendLastSceneChange", this.lastScene);
+        socket.emit("sendLastSceneChange", this.rstate.getLastScene());
+      });
+
+      socket.on("SetMatch", (matchId: string) => {
+        this.rstate.selectMatch(matchId, this.ta);
       });
     });
   }
 
-  initTA() {
-    this.ta.on("matchCreated", (event: TAEvents.PacketEvent<Models.Match>) => {
-      this.io.emit("matchCreated", event.data);
+  setTAListeners() {
+    this.ta.on("taConnected", () => {
+      this.rstate.initMatches(this.ta);
+      this.io.emit("state", this.rstate.getState());
     });
 
-    this.ta.on(
-      "realtimeScore",
-      (recv: TAEvents.PacketEvent<Packets.Push.RealtimeScore>) => {
-        // console.log("realtimeScore", recv.data);
-        let delay = this.ta.getUser(recv.data.user_guid)?.stream_delay_ms;
-        if (delay == undefined) return;
+    this.ta.on("matchCreated", (event: TAEvents.PacketEvent<Models.Match>) => {
+      this.rstate.addMatch(event.data, this.ta);
+      this.io.emit("state", this.rstate.getState());
+    });
 
+    this.ta.on("matchUpdated", (event: TAEvents.PacketEvent<Models.Match>) => {
+      this.rstate.updateMatch(event.data, this.ta);
+      let { matches } = this.rstate.getState();
+      this.io.emit("state", this.rstate.getState());
+    });
+
+    this.ta.on("matchDeleted", (event: TAEvents.PacketEvent<Models.Match>) => {
+      this.rstate.deleteMatch(event.data.guid);
+      this.io.emit("state", this.rstate.getState());
+    });
+
+    this.ta.on("realtimeScore", (recv: TAEvents.PacketEvent<Packets.Push.RealtimeScore>) => {
+      let delay = this.ta.getUser(recv.data.user_guid)?.stream_delay_ms;
+      if (delay == undefined) delay = 0;
+
+      this.rstate.updateRTScore(recv, (data: RTState) => {
         setTimeout(() => {
-          this.io.emit("realtimeScore", recv.data.toObject());
-        }, delay + 1);
-      }
-    );
-
-    setInterval(() => {
-      this.refreshCache();
-    }, 1000);
-  }
-
-  refreshCache() {
-    this.io.emit("state", {
-      matches: this.ta.State.matches.map((e) => e.toObject()),
-      users: this.ta.State.users.map((e) => e.toObject()),
-      self: this.ta.Self.toObject(),
+          this.io.emit("realtimeScore", data);
+        }, delay);
+      });
     });
   }
 }

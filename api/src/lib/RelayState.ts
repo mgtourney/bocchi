@@ -54,15 +54,27 @@ export interface LastScene {
   slug: string;
 }
 
-export interface RTData {
-  playerScores: Map<string, Score>;
-  teamScores: Map<string, Score>;
+export interface State {
+  matches: Map<string, Match>;
+  match?: Match;
+  players?: Map<string, Player>;
+  teams?: Map<string, Team>;
+}
+
+export interface RTState {
+  team: {
+    guid: string,
+    score: Score
+  };
+  player: {
+    guid: string,
+    score: Score
+  };
 }
 
 export class RelayState {
   selectedMatch?: Match;
   private matches: Map<string, Match> = new Map<string, Match>(); // matchguid -> Match
-  private rtData?: RTData;
   private lastScene: LastScene = {
     page: "not-live",
     slug: ""
@@ -70,6 +82,7 @@ export class RelayState {
 
   private addMatchFull(match: Models.Match, TAClient: Client) {
     if (this.selectedMatch == undefined) return;
+
     if (match.has_selected_level && match.has_selected_characteristic) {
       this.selectedMatch.song = {
         id: match.selected_level.level_id,
@@ -78,11 +91,14 @@ export class RelayState {
         difficulty: GameDifficulty[match.selected_difficulty]
       }
     }
+
     this.selectedMatch?.players?.forEach((player: Player) => {
       let teamID = TAClient.getPlayer(player.guid)?.team.id; // TeamGUID is from TA
-      if(teamID == undefined) return;
+      if (teamID == undefined) return;
+
       this.selectedMatch?.teams?.get(teamID)?.players?.set(player.guid, player);
-      if(player.score == undefined) {
+
+      if (player.score == undefined) {
         player.score = {
           points: 0,
           score: 0,
@@ -95,7 +111,7 @@ export class RelayState {
     });
     // TODO: Match.Teams.Avatar
     this.selectedMatch.teams?.forEach((team: Team) => {
-      if(team.score == undefined) {
+      if (team.score == undefined) {
         team.score = {
           points: 0,
           score: 0,
@@ -105,16 +121,19 @@ export class RelayState {
           totalmisscount: 0
         };
       }
+
       team.players?.forEach((player: Player) => {
         player.team = team;
       });
     });
+
     this.selectedMatch.players?.forEach((player: Player) => {
-      if(player.team == undefined) return;
+      if (player.team == undefined) return;
       let iterMembers = this.selectedMatch?.teams?.get(player.team.guid)?.players?.keys();
-      if(iterMembers == undefined) return;
+      if (iterMembers == undefined) return;
+
       Array.from(iterMembers).forEach((member) => {
-        if(member == player.guid) return;
+        if (member == player.guid) return;
         player.teamMembersGUIDs?.push(member);
       });
     });
@@ -166,8 +185,9 @@ export class RelayState {
   selectMatch(matchGUID: string | undefined, TAClient: Client) {
     if (matchGUID == undefined) return;
     let match = TAClient.getMatch(matchGUID);
-    if(match == undefined) return;
+    if (match == undefined) return;
     match.associated_users.push(TAClient.Self.guid);
+    TAClient.updateMatch(match);
     this.selectedMatch = this.matches.get(matchGUID);
     this.addMatchFull(match, TAClient);
   }
@@ -178,7 +198,7 @@ export class RelayState {
     this.matches.delete(matchGUID);
   }
 
-  getState() {
+  getState(): State {
     return {
       matches: this.matches,
       match: this.selectedMatch,
@@ -190,21 +210,25 @@ export class RelayState {
   updateRTScore(realtimeScore: TAEvents.PacketEvent<Packets.Push.RealtimeScore>, callback: CallableFunction) {
     let teamGUID = this.selectedMatch?.players?.get(realtimeScore.data.user_guid)?.team?.guid;
     let otherPlayersGUID = this.selectedMatch?.players?.get(realtimeScore.data.user_guid)?.teamMembersGUIDs;
-    if (teamGUID == undefined) return;
+    if (teamGUID == undefined || otherPlayersGUID == undefined) return;
+
     let updatedPlayer = this.selectedMatch?.players?.get(realtimeScore.data.user_guid);
-    if(updatedPlayer == undefined) return; 
-      updatedPlayer.score = {
+    if (updatedPlayer == undefined) return;
+
+    updatedPlayer.score = {
       score: realtimeScore.data.score_with_modifiers,
       accuracy: realtimeScore.data.accuracy,
       misscount: realtimeScore.data.scoreTracker.notesMissed,
       badcutcount: realtimeScore.data.scoreTracker.badCuts,
       totalmisscount: realtimeScore.data.scoreTracker.notesMissed + realtimeScore.data.scoreTracker.badCuts
     };
+
     let cumulScore = 0, cumulAcc = 0, totalAcc = 0, cumulMiss = 0, cumulBad = 0, cumulTotalMiss = 0;
     let updatedPlayers = this.selectedMatch?.players;
-    if(updatedPlayers == undefined) return;
+    if (updatedPlayers == undefined) return;
+
     updatedPlayers.forEach((player) => {
-      if(player.score == undefined) return;
+      if (player.score == undefined) return;
       if (!otherPlayersGUID?.includes(player.guid)) return;
       cumulScore += player.score.score;
       cumulAcc += player.score.accuracy;
@@ -213,16 +237,28 @@ export class RelayState {
       cumulBad += player.score.badcutcount;
       cumulTotalMiss += player.score.totalmisscount;
     });
+
     let updatedTeam = this.selectedMatch?.teams?.get(teamGUID);
-    if(updatedTeam == undefined) return;
+    if (updatedTeam == undefined) return;
+
     updatedTeam.score = {
-      score: cumulScore,
-      accuracy: Math.round((cumulAcc / totalAcc) * 10000) / 100,
-      misscount: cumulMiss,
-      badcutcount: cumulBad,
-      totalmisscount: cumulTotalMiss
+      score: cumulScore + updatedPlayer.score.score,
+      accuracy: (cumulAcc + updatedPlayer.score.accuracy) / (totalAcc + 1),
+      misscount: cumulMiss + updatedPlayer.score.misscount,
+      badcutcount: cumulBad + updatedPlayer.score.badcutcount,
+      totalmisscount: cumulTotalMiss + updatedPlayer.score.totalmisscount
     };
-    callback(this.rtData);
+
+    callback({
+      team: {
+        guid: updatedTeam.guid,
+        score: updatedTeam.score
+      },
+      player: {
+        guid: updatedPlayer.guid,
+        score: updatedPlayer.score
+      },
+    });
   }
 
   getLastScene() {

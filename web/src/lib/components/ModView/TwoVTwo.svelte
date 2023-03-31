@@ -1,6 +1,7 @@
 <script lang="ts">
   import { io } from "$lib/socket";
   import { Models, Packets } from "tournament-assistant-client";
+  import type { State } from "$lib/relayTypes.d.ts";
 
   function redirectToMatch(e: any) {
     if (e.target == null) return;
@@ -16,7 +17,7 @@
 
 
   let eMatches: any[] = [];
-  io.on("state", (state: any) => {
+  io.on("state", (state: State) => {
     eMatches = state.matches.map((match: Models.Match) => {
       return {
         guid: match.guid,
