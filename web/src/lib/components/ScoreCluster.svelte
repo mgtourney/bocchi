@@ -2,7 +2,7 @@
   import { io } from "$lib/socket";
   import type { RTState } from "$lib/relayTypes";
 
-  export let teamGUID: string;
+  export let teamGUID: string = "bobross";
   export let flipped: Boolean = false;
 
   let missCount = 0;

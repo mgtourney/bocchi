@@ -15,22 +15,16 @@
   let song: Song;
   let team1: string;
   let team2: string;
-  let teams: Map<string, Team> = new Map<string, Team>();
+  let localTeams: Map<string, Team> = new Map<string, Team>();
   let player1: string;
   let player2: string;
   let player3: string;
   let player4: string;
-  let players: Map<string, Player> = new Map<string, Player>();
+  let localPlayers: Map<string, Player> = new Map<string, Player>();
   let diff: number = 0;
 
   // please for the love of god end me.  - niko@velvet.moe
   let qTeams: Map<string, any> = new Map();
-  let qTeam1: any;
-  let qTeam2: any;
-  let qTeam1Users: Set<string> = new Set();
-  let qTeam2Users: Set<string> = new Set();
-  let qTeam1UsersStr: string = "";
-  let qTeam2UsersStr: string = "";
 
   function updateTeam(id: string) {
     let query = gql`
@@ -62,69 +56,49 @@
     });
   }
 
-  io.on("state", ({match}: State) => {
-    
-
-    // match = state.matches.filter(
-    //   (e: Models.Match) => e.guid == data.matchId
-    // )[0];
-    // if (match != undefined) {
-    //   if (match.selected_level != undefined) {
-    //     songName = match.selected_level.name;
-    //     if (match.selected_characteristic != undefined) {
-    //       songChar = match.selected_characteristic.serialized_name;
-
-    //       songDiff =
-    //         GameDifficulty[match.selected_difficulty] == undefined
-    //           ? "Expert+"
-    //           : GameDifficulty[match.selected_difficulty];
-    //     }
-    //   }
-
-    //   let _players = match!.associated_users.filter(
-    //     (e) => e != match!.leader && e != state.self.guid
-    //   );
-    //   let players = state.users.filter((e: Models.User) =>
-    //     _players.includes(e.guid)
-    //   );
-
-    //   team1 = players.filter(
-    //     (e: Models.User) => e.team.id == "c99d666c-0bbb-4530-9803-0d2e1d6034e1"
-    //   );
-    //   team1.forEach((e) => {
-    //     updateTeam(e.user_id);
-    //     qTeam1 = qTeams.get(e.user_id);
-    //     if(!qTeam1Users.has(e.name)) qTeam1Users.add(e.name);
-    //     qTeam1UsersStr = Array.from(qTeam1Users)[0] + " & " + Array.from(qTeam1Users)[1] // forgive my sins :3 - niko
-    //   });
-
-    //   team2 = players.filter(
-    //     (e: Models.User) => e.team.id == "c195776a-6307-4cc3-b6f2-f1f122c89c81"
-    //   );
-    //   team2.forEach((e) => {
-    //     updateTeam(e.user_id);
-    //     qTeam2 = qTeams.get(e.user_id);
-    //     if(!qTeam2Users.has(e.name)) qTeam2Users.add(e.name);
-    //     qTeam2UsersStr = Array.from(qTeam2Users)[0] + " & " + Array.from(qTeam2Users)[1]
-    //   });
-
-    //   team1GUIDS = team1.flatMap((e) => e.guid);
-    //   team2GUIDS = team2.flatMap((e) => e.guid);
-    // }
+  io.on("state", ({teams, players}: State) => {
+    // Set the guids of the players and teams per teams
+    teams?.forEach((team) => {
+      if(team1 == undefined) {
+        team1 = team.guid;
+        team.players?.forEach((player) => {
+          if(player1 == undefined) {
+            player1 = player.guid;
+          } else if (player2 == undefined) {
+            player2 = player.guid;
+          }
+        })
+      } else if(team2 == undefined) {
+        team2 = team.guid;
+        team.players?.forEach((player) => {
+          if(player3 == undefined) {
+            player3 = player.guid;
+          } else if (player4 == undefined) {
+            player4 = player.guid;
+          }
+        })
+      }
+    })
+    // Update the state of everything
+    teams?.forEach((team) => localTeams.set(team.guid, team));
+    players?.forEach((player) => localPlayers.set(player.guid, player));
   });
 
   io.on("realtimeScore", ({ team, player }: RTState) => {
-    if(team.guid === teams.get(team1)?.guid) {
-      let modified = teams.get(team2);
-      if(modified != undefined) {
-        modified.score = team.score;
-        
-      }
-    } else if(team.guid === team2.guid) {
-      team2.score = team.score;
+    // Update the RTScore of the player
+    let modifiedPlayer = localPlayers.get(player.guid);
+    if(modifiedPlayer != undefined) {
+      modifiedPlayer.score = player.score;
+      localTeams.set(player.guid, modifiedPlayer);
     }
-    if(teams.get(team1)?.score?.accuracy == undefined || teams.get(team2)?.score?.accuracy == undefined) return;
-    diff = team1.score?.accuracy - team2.score?.accuracy;
+    // Update the RTScore of the team of the player
+    let modified = localTeams.get(team.guid);
+    if(modified != undefined) {
+      modified.score = team.score;
+      localTeams.set(team.guid, modified);
+    }
+    // Calculate the diff
+    diff = (localTeams.get(team1)?.score?.accuracy) ?? 1 - ((localTeams.get(team2)?.score?.accuracy) ?? 1);
   });
 </script>
 
@@ -134,18 +108,18 @@
     <div class="flex-col">
       {#if team1 != undefined}
         <GameView
-          playerName={player1.name}
-          accuracy={player1.score?.accuracy ?? 100}
-          missCount={player1.score?.misscount ?? 0}
-          steamId={player1.steamid}
+          playerName={localPlayers.get(player1)?.name}
+          accuracy={localPlayers.get(player1)?.score?.accuracy ?? 100}
+          missCount={localPlayers.get(player1)?.score?.misscount ?? 0}
+          steamId={localPlayers.get(player1)?.steamid}
           scale={globalScale}
           muted={false}
         />
         <GameView
-          playerName={player2.name}
-          accuracy={player2.score?.accuracy ?? 100}
-          missCount={player2.score?.misscount ?? 0}
-          steamId={player2.steamid}
+          playerName={localPlayers.get(player2)?.name}
+          accuracy={localPlayers.get(player2)?.score?.accuracy ?? 100}
+          missCount={localPlayers.get(player2)?.score?.misscount ?? 0}
+          steamId={localPlayers.get(player2)?.steamid}
           scale={globalScale}
           muted={true}
           bottom={true}
@@ -156,36 +130,36 @@
 
     <div class="flex-col w-full">
       <div class="flex m-10 mb-28">
-        <ScoreCluster teamGUID={team1.guid} />
+        <ScoreCluster teamGUID={localTeams.get(team1)?.guid} />
         <div class="flex-grow" />
       </div>
       <div class="flex mx-7">
-        <ScoreLine points={team1.score?.points ?? 0} />
+        <ScoreLine points={localTeams.get(team1)?.score?.points ?? 0} />
         <div class="flex-grow" />
-        <ScoreLine points={team2.score?.points ?? 0} />
+        <ScoreLine points={localTeams.get(team2)?.score?.points ?? 0} />
       </div>
       <div class="flex m-10 mt-28">
         <div class="flex-grow" />
-        <ScoreCluster flipped={true} teamGUID={team2.guid} />
+        <ScoreCluster flipped={true} teamGUID={localTeams.get(team2)?.guid} />
       </div>
     </div>
 
     <div class="flex-col">
       {#if team2 != undefined}
         <GameView
-          playerName={player3.name}
-          accuracy={player3.score?.accuracy ?? 100}
-          missCount={player3.score?.misscount ?? 0}
-          steamId={player3.steamid}
+          playerName={localPlayers.get(player3)?.name}
+          accuracy={localPlayers.get(player3)?.score?.accuracy ?? 100}
+          missCount={localPlayers.get(player3)?.score?.misscount ?? 0}
+          steamId={localPlayers.get(player3)?.steamid}
           scale={globalScale}
           muted={true}
           flipped={true}
         />
         <GameView
-          playerName={player4.name}
-          accuracy={player4.score?.accuracy ?? 100}
-          missCount={player4.score?.misscount ?? 0}
-          steamId={player4.steamid}
+          playerName={localPlayers.get(player4)?.name}
+          accuracy={localPlayers.get(player4)?.score?.accuracy ?? 100}
+          missCount={localPlayers.get(player4)?.score?.misscount ?? 0}
+          steamId={localPlayers.get(player4)?.steamid}
           scale={globalScale}
           muted={true}
           flipped={true}
@@ -195,9 +169,9 @@
     </div>
   </div>
   <div class="flex items-center justify-center">
-    <TeamInfo avatar={team1.avatar} name={team1.name} members={`${player1} ${player2}`}/>
+    <TeamInfo avatar={localTeams.get(team1)?.avatar} name={localTeams.get(team1)?.name} members={`${localPlayers.get(player1)?.name} ${localPlayers.get(player2)?.name}`}/>
     <div class="w-full" />
-    <TeamInfo flipped={true} avatar={team2.avatar} name={team2.name} members={`${player3} ${player4}`}/>
+    <TeamInfo flipped={true} avatar={localTeams.get(team2)?.avatar} name={localTeams.get(team2)?.name} members={`${localPlayers.get(player3)?.name} ${localPlayers.get(player4)?.name}`}/>
   </div>
   <div class="flex h-full items-center justify-center">
     <SongTitle songName={song?.name ?? "Loading..."} songDiff={song?.difficulty ?? "Loading..."} />

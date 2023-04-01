@@ -9,7 +9,7 @@
   export let accuracy: number;
   export let missCount: number;
 
-  export let steamId: string;
+  export let steamId: string = "0";
 
   export let scale: number = 1;
   export let muted: boolean = true;
