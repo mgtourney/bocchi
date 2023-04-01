@@ -41,9 +41,14 @@ export interface Song {
   difficulty: string;
 }
 
+export interface Coordinator {
+  guid: string;
+  name: string;
+}
+
 export interface Match {
   guid: string;
-  coordinator: string;
+  coordinator: Coordinator;
   players?: Map<string, Player>; // playerguid -> Player
   teams?: Map<string, Team>; // teamguid -> Team
   song?: Song;
@@ -158,7 +163,10 @@ export class RelayState {
     // add match
     this.matches.set(match.guid, {
       guid: match.guid,
-      coordinator: match.leader,
+      coordinator: {
+        guid: match.leader,
+        name:  TAClient.getCoordinator(match.leader)?.name ?? ""
+      },
       players: matchPlayers,
       teams: matchTeams
     });

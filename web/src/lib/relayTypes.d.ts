@@ -31,9 +31,14 @@ export interface Song {
   difficulty: string;
 }
 
+export interface Coordinator {
+  guid: string;
+  name: string;
+}
+
 export interface Match {
   guid: string;
-  coordinator: string;
+  coordinator: Coordinator;
   players?: Map<string, Player>; // playerguid -> Player
   teams?: Map<string, Team>; // teamguid -> Team
   song?: Song;

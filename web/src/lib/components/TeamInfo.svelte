@@ -1,32 +1,13 @@
 <script lang="ts">
-  export let pos: number = 0;
-  export let avatar: string;
+  export let flipped: boolean = false;
+  export let avatar: string | undefined;
   export let name: string = "Loading...";
   export let members: string = "Loading...";
 
-  if (avatar == null) avatar = "/assets/loading.png"
+  if (avatar == undefined) avatar = "/assets/loading.png"
 </script>
 
-{#if pos == 0}
-  <div
-    class="flex flex-row items-center pt-20 pl-6 space-x-3 w-[900px] h-[100px]"
-  >
-    <!-- Profile Picture -->
-    <img
-      src={avatar}
-      alt="bobross"
-      class="rounded-[34px] w-[102px] h-[102px] m-4 border-[#FFFFFF30] border-[6px] bg-opacity-50 object-fill"
-    />
-
-    <!-- Name -->
-    <div class="flex flex-col px-4 w-[900px]">
-      <h1 class="team-name text-ellipsis">
-        {name}
-      </h1>
-      <h2 class="team-members text-ellipsis">{members}</h2>
-    </div>
-  </div>
-{:else}
+{#if flipped}
   <!-- Mirrored to the right -->
   <div
     class="flex flex-row-reverse items-center pt-20 pr-6 space-x-3 w-[900px] h-[100px] space-x-reverse"
@@ -40,6 +21,25 @@
 
     <!-- Name -->
     <div class="flex flex-col items-end justify-center px-4 w-[900px]">
+      <h1 class="team-name text-ellipsis">
+        {name}
+      </h1>
+      <h2 class="team-members text-ellipsis">{members}</h2>
+    </div>
+  </div>
+{:else}
+  <div
+    class="flex flex-row items-center pt-20 pl-6 space-x-3 w-[900px] h-[100px]"
+  >
+    <!-- Profile Picture -->
+    <img
+      src={avatar}
+      alt="bobross"
+      class="rounded-[34px] w-[102px] h-[102px] m-4 border-[#FFFFFF30] border-[6px] bg-opacity-50 object-fill"
+    />
+
+    <!-- Name -->
+    <div class="flex flex-col px-4 w-[900px]">
       <h1 class="team-name text-ellipsis">
         {name}
       </h1>

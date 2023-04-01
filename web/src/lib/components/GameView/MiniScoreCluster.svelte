@@ -1,41 +1,25 @@
 <script lang="ts">
-  import { writable } from "svelte/store";
-  import { tweened } from "svelte/motion";
-  import { io } from "$lib/socket";
-  import type { Packets } from "tournament-assistant-client";
   export let flipped: Boolean = false;
-  let missCount: number = 0;
-  let accuracy: number = 100;
-  
-  export let playerGUID: string;
-
-  io.on('realtimeScore', (score: Packets.Push.RealtimeScore) => {
-    if (score.user_guid == playerGUID) {
-      missCount = score.scoreTracker.notesMissed + score.scoreTracker.badCuts;
-      accuracy = Math.round(score.accuracy * 10000) / 100
-    }
-  });
-  
-  $: missCountLocal = tweened(missCount);
-  $: accuracyLocal = tweened(accuracy);
+  export let missCount: number;
+  export let accuracy: number;
 </script>
 
 <div class="flex-col">
   <div class="flex">
     {#if !flipped}
-      <h1 class="m-2 misses">{$missCountLocal}</h1>
-      <h1 class="flex-grow m-1 misses-text unflip">MISS{($missCountLocal == 2) ? '' : 'ES'}</h1>
+      <h1 class="m-2 misses">{missCount}</h1>
+      <h1 class="flex-grow m-1 misses-text unflip">MISS{(missCount == 2) ? '' : 'ES'}</h1>
     {/if}
     
     {#if flipped}
-      <h1 class="flex-grow m-1 misses-text flip">MISS{($missCountLocal == 2) ? '' : 'ES'}</h1>
-      <h1 class="m-2 misses">{$missCountLocal}</h1>
+      <h1 class="flex-grow m-1 misses-text flip">MISS{(missCount == 2) ? '' : 'ES'}</h1>
+      <h1 class="m-2 misses">{missCount}</h1>
     {/if}
   </div>
   {#if flipped}
-    <h1 class="m-2 acc-text flip">{$accuracyLocal}%</h1>
+    <h1 class="m-2 acc-text flip">{accuracy}%</h1>
   {:else}
-    <h1 class="m-2 acc-text unflip">{$accuracyLocal}%</h1>
+    <h1 class="m-2 acc-text unflip">{accuracy}%</h1>
   {/if}
 </div>
 <style>

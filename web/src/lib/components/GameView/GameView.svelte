@@ -6,13 +6,15 @@
 
   export let playerName = "Loading...";
 
-  export let playerGUID: string;
+  export let accuracy: number;
+  export let missCount: number;
 
-  export let playerId: string;
+  export let steamId: string;
 
   export let scale: number = 1;
   export let muted: boolean = true;
-  export let pos: number;
+  export let flipped: boolean = false;
+  export let bottom: boolean = false;
 
   let twitchName = ""
   let twitch_query = gql`
@@ -24,31 +26,21 @@
   }
 }
   `
+
+  const styling = () => {
+    let base = "border-[#FFFFFF30] border-b-[5px] ";
+    let side = flipped ? "border-l-[9px]" : "border-r-[9px]";
+    let roundCorner = flipped ? " rounded-bl-[38px]" : " rounded-br-[38px]";
+    return bottom ? base + side + roundCorner : base + side;
+  }
   
-  GQL.request(twitch_query, { where: { steam: playerId } }).then((val: any) => {
+  GQL.request(twitch_query, { where: { steam: steamId } }).then((val: any) => {
     console.log(val);
     twitchName = val.getPlayer.socials.twitch; // the fuck the live share's still open? LMAO
   })
 </script>
 
-{#if pos == 0}
 <div class="w-auto h-auto">
-  <StreamView bind:twitchName bind:scale bind:muted style="border-[#FFFFFF30] border-b-[5px] border-r-[9px]"/>
-  <PlayerInfo bind:playerName bind:pos bind:playerGUID bind:playerId/>
+  <StreamView bind:twitchName bind:scale bind:muted style={styling()}/>
+  <PlayerInfo bind:playerName bind:flipped bind:accuracy bind:missCount bind:playerId={steamId}/>
 </div>
-{:else if pos == 1}
-<div class="w-auto h-auto">
-  <StreamView bind:twitchName bind:scale bind:muted style="border-[#FFFFFF30] border-b-[5px] border-r-[9px] rounded-br-[38px]"/>
-  <PlayerInfo bind:playerName bind:pos bind:playerGUID bind:playerId/>
-</div> 
-{:else if pos == 2}
-<div class="w-auto h-auto">
-  <StreamView bind:twitchName bind:scale bind:muted style="border-[#FFFFFF30] border-b-[5px] border-l-[9px]"/>
-  <PlayerInfo bind:playerName bind:pos bind:playerGUID bind:playerId/>
-</div> 
-{:else if pos == 3}
-<div class="w-auto h-auto">
-  <StreamView bind:twitchName bind:scale bind:muted style="border-[#FFFFFF30] border-b-[5px] border-l-[9px] rounded-bl-[38px]"/>
-  <PlayerInfo bind:playerName bind:pos bind:playerGUID bind:playerId/>
-</div> 
-{/if}

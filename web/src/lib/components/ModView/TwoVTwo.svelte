@@ -1,7 +1,7 @@
 <script lang="ts">
   import { io } from "$lib/socket";
   import { Models, Packets } from "tournament-assistant-client";
-  import type { State } from "$lib/relayTypes.d.ts";
+  import type { Match, Player, State } from "$lib/relayTypes";
 
   function redirectToMatch(e: any) {
     if (e.target == null) return;
@@ -15,24 +15,15 @@
     io.emit("SetMatch", e.target.id);
   }
 
+  function formatPlayers(players: Map<string,Player> | undefined) {
+    const iterPlayers = players?.values() ?? [];
 
-  let eMatches: any[] = [];
-  io.on("state", (state: State) => {
-    eMatches = state.matches.map((match: Models.Match) => {
-      return {
-        guid: match.guid,
-        coordinator: state.users.find(
-          (user: Models.User) => user.guid == match.leader
-        ),
-        players: match.associated_users.map((userGuid: string) =>
-          state.users.find(
-            (user: Models.User) =>
-              user.guid == userGuid &&
-              user.client_type == Models.User.ClientTypes.Player
-          )
-        ),
-      };
-    });
+    return Array.from(iterPlayers).flatMap((player: Player) => player.name).join(" ");
+  }
+
+  let eMatches: Match[] = [];
+  io.on("state", ({ matches }: State) => {
+    eMatches = Array.from(matches.values());
   });
 </script>
 
@@ -57,10 +48,10 @@
           <tr>
             <td class="border px-4 py-2 text-center">{match.guid}</td>
             <td class="border px-4 py-2 text-center"
-              >{match.coordinator?.name}</td
+              >{match.coordinator.name}</td
             >
             <td class="border px-4 py-2 text-center">
-              {match.players.map((player) => player?.name).join(" ")}
+              {formatPlayers(match.players)}
             </td>
             <td>
               <button
