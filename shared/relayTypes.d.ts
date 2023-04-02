@@ -46,7 +46,7 @@ export interface Match {
 
 export interface State {
   selectedMatch?: Match;
-  players?: Match[];
+  players?: Player[];
   matches: Match[];
   teams?: Team[];
 }

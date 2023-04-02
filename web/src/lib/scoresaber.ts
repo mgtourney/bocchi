@@ -31,6 +31,6 @@ export interface PlayerInfoFull {
 
 export async function getPlayerInfoFull(id: String): Promise<PlayerInfoFull> {
     if (id.length != 17) throw null;
-    const response = await fetch(`https://skillsaber.vercel.app/api/player?id=${id}`);
-    return await response.json();
+    //const response = await fetch(`https://skillsaber.vercel.app/api/player?id=${id}`);
+    //return await response.json();
 }

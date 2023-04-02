@@ -8,14 +8,13 @@
     // console.log(e.target.id);
 
     io.emit("ChangeScene", {
-      page: "2v2",
-      slug: `/${e.target.id}`,
+      page: "2v2"
     });
 
     io.emit("SetMatch", e.target.id);
   }
 
-  function formatPlayers(players: Map<string, Player> | undefined) {
+  function formatPlayers(players: Player[] | undefined) {
     console.log(players);
     const iterPlayers = players?.values() ?? [];
     return Array.from(iterPlayers)
@@ -26,7 +25,7 @@
   let eMatches: Match[] = [];
   io.on("state", (state : State) => {
     console.log(state)
-    //eMatches = Array.from(state?.matches?.values() ?? []);
+    eMatches = state.matches;
   });
 </script>
 

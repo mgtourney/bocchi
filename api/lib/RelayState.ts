@@ -26,6 +26,7 @@ export class RelayState {
 
   private addMatchFull(match: Models.Match, TAClient: Client) {
     if (this.selectedMatch == undefined) return;
+    //console.log("FULL MATCH ADD");
 
     if (match.has_selected_level && match.has_selected_characteristic) {
       this.selectedMatch.song = {
@@ -42,10 +43,10 @@ export class RelayState {
 
       // this.selectedMatch?.teams?.get(teamID)?.players?.set(player.guid, player);
       // in array form:
-      let team = this.selectedMatch?.teams?.find((team) => team.guid == teamID)
-
+      let team = this.selectedMatch?.teams?.find((team) => team.guid == teamID);
       if (team == undefined) return;
-      team.players?.push(player);
+
+      // team.players = [] (this exceeds the callstack, and fails. WHY WHY ON EARTH)
 
       if (player.score == undefined) {
         player.score = {
@@ -57,6 +58,7 @@ export class RelayState {
           totalmisscount: 0,
         };
       }
+      team.players?.push(player); //TODO: some fuckery here
     });
 
     // TODO: Match.Teams.Avatar
@@ -72,7 +74,7 @@ export class RelayState {
         };
       }
 
-      team.players?.forEach((player: Player) => {
+      team.players?.forEach((player: Player) => { // I need food brb
         player.team = team;
       });
     });
@@ -93,19 +95,37 @@ export class RelayState {
   }
 
   private addMatchGeneral(match: Models.Match, TAClient: Client) {
-    if (this.matches.find((m) => m.guid == match.guid) != undefined) return;
+    let matchPlayers: Player[] = [];
+    let matchTeams: Team[] = [];
 
     TAClient.getMatchPlayers(match).forEach((player: PlayerWithScore) => {
-      this.matches.push({
-        guid: match.guid,
-        coordinator: {
-          guid: match.leader,
-          name: TAClient.getCoordinator(match.leader)?.name ?? "",
-        },
-        players: [],
-        teams: []
+      // TODO: Check if team already exist to not add it twice
+      if (matchTeams.find((t) => t.guid == player.team.id) == undefined) {
+        matchTeams.push({
+          guid: player.team?.id,
+          name: player.team.name
+        });
+      }
+      matchPlayers.push({
+        guid: player.guid,
+        steamid: player.user_id,
+        name: player.name
       });
     });
+    let tempMatch = {
+      guid: match.guid,
+      coordinator: {
+        guid: match.leader,
+        name: TAClient.getCoordinator(match.leader)?.name ?? "",
+      },
+      players: matchPlayers,
+      teams: matchTeams
+    };
+    if (this.matches.find((e) => e.guid == match.guid) != undefined) {
+      this.matches = this.matches.map((e) => e.guid == match.guid? tempMatch : e);
+    } else {
+      this.matches.push(tempMatch);
+    }
   }
 
   initMatches(TAClient: Client) {
@@ -139,7 +159,8 @@ export class RelayState {
   deleteMatch(matchGUID: string | undefined) {
     if (matchGUID == undefined) return;
     if (this.selectedMatch?.guid == matchGUID) this.selectedMatch = undefined;
-    this.matches.delete(matchGUID);
+    this.matches = this.matches.filter((e) => e.guid != matchGUID)
+    console.log(this.matches)
   }
 
   getState(): any {
@@ -155,12 +176,8 @@ export class RelayState {
     realtimeScore: TAEvents.PacketEvent<Packets.Push.RealtimeScore>,
     callback: CallableFunction
   ) {
-    let teamGUID = this.selectedMatch?.players?.get(
-      realtimeScore.data.user_guid
-    )?.team?.guid;
-    let otherPlayersGUID = this.selectedMatch?.players?.get(
-      realtimeScore.data.user_guid
-    )?.teamMembersGUIDs;
+    let teamGUID = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid)?.team?.guid;
+    let otherPlayersGUID = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid)?.teamMembersGUIDs;
     if (teamGUID == undefined || otherPlayersGUID == undefined) return;
 
     let updatedPlayer = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid);
@@ -231,6 +248,7 @@ export class RelayState {
     let teamBackup = this.selectedMatch?.teams?.find((e) => e.guid == teamGUID);
     if (teamBackup?.score == undefined) return;
     teamBackup.score.points = points;
-    this.selectedMatch?.teams?.set(teamGUID, teamBackup);
+
+    this.selectedMatch!.teams = this.selectedMatch!.teams?.map((e) => e.guid == teamGUID? teamBackup! : e);
   }
 }

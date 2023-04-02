@@ -37,7 +37,9 @@ export default class Relay {
 
   setSocketListeners() {
     this.io.on("connection", (socket) => {
-      socket.emit("state", this.rstate.getState());
+      socket.on("updateState", () => {
+        socket.emit("state", this.rstate.getState());
+      });
 
       socket.on("ChangeScene", (msg) => {
         this.rstate.setLastScene(msg);
