@@ -8,11 +8,11 @@
   <div class="flex">
     {#if !flipped}
       <h1 class="m-2 misses">{missCount}</h1>
-      <h1 class="flex-grow m-1 misses-text unflip">MISS{(missCount == 2) ? '' : 'ES'}</h1>
+      <h1 class="flex-grow m-1 misses-text unflip">MISS{(missCount === 2) ? '' : 'ES'}</h1>
     {/if}
     
     {#if flipped}
-      <h1 class="flex-grow m-1 misses-text flip">MISS{(missCount == 2) ? '' : 'ES'}</h1>
+      <h1 class="flex-grow m-1 misses-text flip">MISS{(missCount === 2) ? '' : 'ES'}</h1>
       <h1 class="m-2 misses">{missCount}</h1>
     {/if}
   </div>
@@ -22,6 +22,7 @@
     <h1 class="m-2 acc-text unflip">{accuracy}%</h1>
   {/if}
 </div>
+
 <style>
   .misses {
     font-style: normal;

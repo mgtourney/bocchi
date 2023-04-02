@@ -20,8 +20,7 @@ async function main() {
         context: ({ req, res }) => ({ req, res, prisma }),
     })
 
-    const relay = new Relay();
-
+    new Relay();
     await server.listen(4000).then(({ url }) => {
         console.log(`🚀 Server ready at: ${url}`)
     })

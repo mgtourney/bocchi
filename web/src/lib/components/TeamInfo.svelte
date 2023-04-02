@@ -3,8 +3,6 @@
   export let avatar: string | undefined;
   export let name: string = "Loading...";
   export let members: string = "Loading...";
-
-  if (avatar == undefined) avatar = "/assets/loading.png"
 </script>
 
 {#if flipped}
@@ -14,7 +12,7 @@
   >
     <!-- Profile Picture -->
     <img
-      src={avatar}
+      src={avatar ?? "/assets/loading.png"}
       alt="bobross"
       class="rounded-[34px] w-[102px] h-[102px] m-4 border-[#FFFFFF30] border-[6px] bg-opacity-50"
     />
@@ -33,17 +31,17 @@
   >
     <!-- Profile Picture -->
     <img
-      src={avatar}
+      src={avatar ?? "/assets/loading.png"}
       alt="bobross"
       class="rounded-[34px] w-[102px] h-[102px] m-4 border-[#FFFFFF30] border-[6px] bg-opacity-50 object-fill"
     />
 
     <!-- Name -->
     <div class="flex flex-col px-4 w-[900px]">
-      <h1 class="team-name text-ellipsis">
+      <h1 class="team-name">
         {name}
       </h1>
-      <h2 class="team-members text-ellipsis">{members}</h2>
+      <h2 class="team-members">{members}</h2>
     </div>
   </div>
 {/if}

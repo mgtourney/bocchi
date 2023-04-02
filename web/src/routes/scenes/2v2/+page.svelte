@@ -9,11 +9,11 @@
   import { gql } from "graphql-request";
   import { GQL } from "$lib/constants";
   import type { Player, RTState, Song, State, Team } from "shared/relayTypes";
-    import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
 
   let globalScale = 0.412;
-  
-  let song: Song;
+
+  let song: Song | undefined;
   let team1: string;
   let team2: string;
   let localTeams: Map<string, Team> = new Map<string, Team>();
@@ -45,7 +45,6 @@
     //       }
     //     }
     //   `;
-
     //   GQL.request(query, { where: { id: val.getPlayer.team } }).then(
     //     (val: any) => {
     //       // console.log(val)
@@ -57,67 +56,83 @@
     // });
   }
 
-  io.on("state", ({teams, players}: State) => {
+  io.on("state", ({ teams, players, selectedMatch }: State) => {
     // Set the guids of the players and teams per teams
     //console.log(teams)
     teams?.forEach((team) => {
-      if(team1 == undefined) {
+      if (team1 == undefined) {
         team1 = team.guid;
         console.log(team);
-        team.players?.forEach((player) => {
-          if(player1 == undefined) {
-            player1 = player.guid;
+        team.playerGUIDs?.forEach((player) => {
+          if (player1 == undefined) {
+            player1 = player;
           } else if (player2 == undefined) {
-            player2 = player.guid;
+            player2 = player;
           }
-        })
-      } else if(team2 == undefined) {
+        });
+      } else if (team2 == undefined) {
         team2 = team.guid;
-        team.players?.forEach((player) => {
-          if(player3 == undefined) {
-            player3 = player.guid;
+        team.playerGUIDs?.forEach((player) => {
+          if (player3 == undefined) {
+            player3 = player;
           } else if (player4 == undefined) {
-            player4 = player.guid;
+            player4 = player;
           }
-        })
+        });
       }
-    })
+    });
     // Update the state of everything
     teams?.forEach((team) => localTeams.set(team.guid, team));
     players?.forEach((player) => localPlayers.set(player.guid, player));
-    
+
+    song = selectedMatch?.song;
   });
 
   io.on("realtimeScore", ({ team, player }: RTState) => {
     // Update the RTScore of the player
     let modifiedPlayer = localPlayers.get(player.guid);
-    if(modifiedPlayer != undefined) {
+    if (modifiedPlayer != undefined) {
       modifiedPlayer.score = player.score;
       localTeams.set(player.guid, modifiedPlayer);
     }
     // Update the RTScore of the team of the player
     let modified = localTeams.get(team.guid);
-    if(modified != undefined) {
+    if (modified != undefined) {
       modified.score = team.score;
       localTeams.set(team.guid, modified);
     }
     // Calculate the diff
-    diff = (localTeams.get(team1)?.score?.accuracy) ?? 1 - ((localTeams.get(team2)?.score?.accuracy) ?? 1);
+    diff = (
+      localTeams.get(team1)?.score?.accuracy ??
+      1 - (localTeams.get(team2)?.score?.accuracy ?? 1)) * 100;
   });
+  let int: NodeJS.Timer;
 
   onMount(() => {
-    io.emit("updateState");
-  })
+    int = setInterval(() => {
+      io.emit("updateState");
+    }, 1000);
+  });
+
+  onDestroy(() => {
+    clearInterval(int);
+  });
+
+  const trunc = (input: string) =>
+    input.length > 10 ? `${input.substring(0, 10)}...` : input;
+  
+  const songTrunc = (input: string) => 
+    input.length > 25 ? `${input.substring(0, 25)}...` : input;
 </script>
 
 <div class="flex-col w-full h-full">
   <DiffBar bind:diff />
   <div class="flex items-center justify-center">
     <div class="flex-col">
-      {#if team1 != undefined}
+      {#if team1 !== undefined}
         <GameView
           playerName={localPlayers.get(player1)?.name}
-          accuracy={localPlayers.get(player1)?.score?.accuracy ?? 100}
+          accuracy={Math.round((localPlayers.get(player1)?.score?.accuracy ?? 1) * 10000) / 100}
           missCount={localPlayers.get(player1)?.score?.misscount ?? 0}
           steamId={localPlayers.get(player1)?.steamid}
           scale={globalScale}
@@ -125,7 +140,7 @@
         />
         <GameView
           playerName={localPlayers.get(player2)?.name}
-          accuracy={localPlayers.get(player2)?.score?.accuracy ?? 100}
+          accuracy={Math.round((localPlayers.get(player2)?.score?.accuracy ?? 1) * 10000) / 100}
           missCount={localPlayers.get(player2)?.score?.misscount ?? 0}
           steamId={localPlayers.get(player2)?.steamid}
           scale={globalScale}
@@ -153,10 +168,10 @@
     </div>
 
     <div class="flex-col">
-      {#if team2 != undefined}
+      {#if team2 !== undefined}
         <GameView
           playerName={localPlayers.get(player3)?.name}
-          accuracy={localPlayers.get(player3)?.score?.accuracy ?? 100}
+          accuracy={Math.round((localPlayers.get(player3)?.score?.accuracy ?? 1) * 10000) / 100}
           missCount={localPlayers.get(player3)?.score?.misscount ?? 0}
           steamId={localPlayers.get(player3)?.steamid}
           scale={globalScale}
@@ -165,7 +180,7 @@
         />
         <GameView
           playerName={localPlayers.get(player4)?.name}
-          accuracy={localPlayers.get(player4)?.score?.accuracy ?? 100}
+          accuracy={Math.round((localPlayers.get(player4)?.score?.accuracy ?? 1) * 10000) / 100}
           missCount={localPlayers.get(player4)?.score?.misscount ?? 0}
           steamId={localPlayers.get(player4)?.steamid}
           scale={globalScale}
@@ -177,11 +192,31 @@
     </div>
   </div>
   <div class="flex items-center justify-center">
-    <TeamInfo avatar={localTeams.get(team1)?.avatar} name={localTeams.get(team1)?.name} members={`${localPlayers.get(player1)?.name} ${localPlayers.get(player2)?.name}`}/>
+    <TeamInfo
+      avatar={localTeams.get(team1)?.avatar}
+      name={localTeams.get(team1)?.name}
+      members={`${trunc(localPlayers.get(player1)?.name ?? "")} & ${trunc(localPlayers.get(player2)?.name ?? "")}`}
+    />
     <div class="w-full" />
-    <TeamInfo flipped={true} avatar={localTeams.get(team2)?.avatar} name={localTeams.get(team2)?.name} members={`${localPlayers.get(player3)?.name} ${localPlayers.get(player4)?.name}`}/>
+    <TeamInfo
+      flipped={true}
+      avatar={localTeams.get(team2)?.avatar}
+      name={localTeams.get(team2)?.name}
+      members={`${trunc(localPlayers.get(player3)?.name ?? "")} & ${trunc(localPlayers.get(player4)?.name ?? "")}`}
+    />
   </div>
   <div class="flex h-full items-center justify-center">
-    <SongTitle songName={song?.name ?? "Loading..."} songDiff={song?.difficulty ?? "Loading..."} />
+    <SongTitle
+      songName={song?.name ?? "Loading..."}
+      songDiff={song?.difficulty ?? "Loading..."}
+    />
+    <!-- <marquee
+  direction="down"
+  width="250"
+  height="200"
+  behavior="alternate"
+  style="border:solid">
+  <marquee class="text-white" behavior="alternate"> seven twenty seven </marquee>
+</marquee> -->
   </div>
 </div>

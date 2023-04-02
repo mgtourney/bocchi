@@ -41,7 +41,7 @@
         </tr>
       </thead>
       <tbody>
-        {#if eMatches.length == 0}
+        {#if eMatches.length === 0}
           <tr>
             <td class="border px-4 py-2 text-center" colspan="4">No Matches</td>
           </tr>
@@ -52,7 +52,7 @@
               <td class="border px-4 py-2 text-center"
                 >{match.coordinator.name}</td
               >
-              <td class="border px-4 py-2 text-center">
+              <td class="border px-4 py-2 text-center text-ellipsis">
                 {formatPlayers(match.players)}
               </td>
               <td>

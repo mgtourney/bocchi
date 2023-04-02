@@ -3,12 +3,11 @@
   export let scale: number = 1;
   export let muted: boolean = true;
   export let style: string;
+
   let width = 1920 * scale;
   let height = 1080 * scale;
 </script>
 
-
-<!-- Disable mature content warning  -->
 <iframe
   id="{twitchName}-twitch"
   title="{twitchName}'s stream"
@@ -17,5 +16,5 @@
   {width}
   frameborder="0"
   scrolling="no"
-  class="{style}"
+  class={style}
 />

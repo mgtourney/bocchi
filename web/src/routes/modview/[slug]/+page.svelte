@@ -9,12 +9,12 @@
   export let data: PageData;
 </script>
 
-{#if data.path == "starting-soon"}
+{#if data.path === "starting-soon"}
   <StartingSoon />
-{:else if data.path == "2v2"}
+{:else if data.path === "2v2"}
   <TwoVTwo />
-{:else if data.path == "players"}
+{:else if data.path === "players"}
   <Players />
-{:else if data.path == "teams"}
+{:else if data.path === "teams"}
   <Teams />
 {/if}

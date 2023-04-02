@@ -18,7 +18,7 @@ export interface Player {
 
 export interface Team {
   guid: string;
-  players?: Player[]; // playerguid -> Player
+  playerGUIDs?: string[];
   name: string;
   score?: Score;
   avatar?: string;

@@ -2,7 +2,18 @@
   export let songName: string = "Loading...";
   export let songDiff: string = "Loading...";
 </script>
-<h1 class="song-title text-white">{songName} • {songDiff}</h1>
+
+<!-- svelte-ignore a11y-distracting-elements -->
+{#if `${songName} * ${songDiff}`.length > 25}
+<marquee class="song-title text-white w-[30vw] rounded-full" scrollamount="3" behavior="scroll" direction="left">
+  {songName} • {songDiff}
+</marquee>
+{:else}
+<div class="song-title text-white w-[30vw] rounded-full justify-center item-center text-center">
+  {songName} • {songDiff}
+</div>
+{/if}
+
 <style>
   .song-title {
     font-style: normal;

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { io } from "$lib/socket";
-  import type { RTState } from "$lib/relayTypes";
+  import type { RTState } from "shared/relayTypes";
 
   export let teamGUID: string = "bobross";
   export let flipped: Boolean = false;
@@ -17,19 +17,18 @@
     }
   });
 </script>
-
 <div class="flex-col">
   <div class="flex">
     {#if !flipped}
       <h1 class="m-2 misses">{missCount}</h1>
       <h1 class="flex-grow m-1 misses-text unflip">
-        MISS{missCount == 2 ? "" : "ES"}
+        MISS{missCount === 2 ? "" : "ES"}
       </h1>
     {/if}
 
     {#if flipped}
       <h1 class="flex-grow m-1 misses-text flip">
-        MISS{missCount == 2 ? "" : "ES"}
+        MISS{missCount === 2 ? "" : "ES"}
       </h1>
       <h1 class="m-2 misses">{missCount}</h1>
     {/if}

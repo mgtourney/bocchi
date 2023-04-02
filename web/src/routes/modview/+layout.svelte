@@ -5,7 +5,7 @@
 
   async function particlesInit(engine: Engine) {
       await loadFull(engine);
-  };
+  }
 </script>
 
 <div id="particles" class="bg-[#161616]">

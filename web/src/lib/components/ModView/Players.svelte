@@ -154,7 +154,7 @@
           <tr>
             <td class="border p-2">{player.steam}</td>
             <td class="border p-2">{player.name}</td>
-            <td class="border p-2">{teams.filter((e) => e.id == player.team).flatMap((e) => e.name)}</td>
+            <td class="border p-2">{teams.filter((e) => e.id === player.team).flatMap((e) => e.name)}</td>
             <td class="border p-2">{player.socials?.twitch}</td>
             <td class="border p-2">{player.socials?.discord}</td>
             <td class="border p-2">
