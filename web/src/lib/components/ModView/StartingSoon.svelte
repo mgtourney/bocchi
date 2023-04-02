@@ -12,7 +12,7 @@
 
     io.emit("ChangeScene", {
       page: "starting-soon",
-      slug: `/${currentDate.getTime()}`
+      data: `${currentDate.getTime()}`
     })
   }
 </script>

@@ -36,6 +36,7 @@
         "eslint": "^8.28.0",
         "eslint-plugin-svelte3": "^4.0.0",
         "postcss": "^8.4.21",
+        "shared": "file:../shared",
         "tailwindcss": "^3.2.7",
         "ts-node": "^10.9.1",
         "tslib": "^2.4.1",

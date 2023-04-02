@@ -8,7 +8,7 @@
   import { io } from "$lib/socket";
   import { gql } from "graphql-request";
   import { GQL } from "$lib/constants";
-  import type { Player, RTState, Song, State, Team } from "$lib/relayTypes";
+  import type { Player, RTState, Song, State, Team } from "shared/relayTypes";
 
   let globalScale = 0.412;
   

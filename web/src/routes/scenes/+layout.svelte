@@ -12,20 +12,18 @@
 			io.emit("getLastSceneChange");
 		}
 		io.on("sendLastSceneChange", (msg) => {
-			stinger = msg.type;
+			stinger = msg;
 			setTimeout(() => {
-				delay = msg.type;
-				goto(`/scenes/${msg.page}${msg.slug}`);
+				delay = msg;
+				goto(`/scenes/${msg}`);
 			}, 1000)	
 		})
 
 		io.on("ChangeScene", (msg) => {
-			if(msg.page == null) { return; }
-			
-			stinger = msg.type;
+			stinger = msg;
 			setTimeout(() => {
-				delay = msg.type;
-				goto(`/scenes/${msg.page}${msg.slug}`);
+				delay = msg;
+				goto(`/scenes/${msg}`);
 			}, 1000)	
 		});
 	})

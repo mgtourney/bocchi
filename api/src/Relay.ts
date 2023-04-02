@@ -6,7 +6,8 @@ import {
   type TAEvents,
 } from "tournament-assistant-client";
 import { Server } from "socket.io";
-import { RelayState, type RTState } from "./lib/RelayState";
+import type { RTState } from "shared/relayTypes"; // fix this skkeye lmao // f u
+import { RelayState } from "../lib/RelayState";
 
 export default class Relay {
   ta: Client;
@@ -40,16 +41,20 @@ export default class Relay {
 
       socket.on("ChangeScene", (msg) => {
         this.rstate.setLastScene(msg);
-        socket.broadcast.emit("ChangeScene", msg);
+        socket.broadcast.emit("ChangeScene", this.rstate.getLastScene().page);
       });
 
       socket.on("getLastSceneChange", () => {
-        socket.emit("sendLastSceneChange", this.rstate.getLastScene());
+        socket.emit("sendLastSceneChange", this.rstate.getLastScene().page);
       });
 
       socket.on("SetMatch", (matchId: string) => {
         this.rstate.selectMatch(matchId, this.ta);
       });
+
+      socket.on("getPageData", () => {
+        socket.emit("pageData", this.rstate.getLastScene().data);
+      })
     });
   }
 
@@ -66,7 +71,6 @@ export default class Relay {
 
     this.ta.on("matchUpdated", (event: TAEvents.PacketEvent<Models.Match>) => {
       this.rstate.updateMatch(event.data, this.ta);
-      let { matches } = this.rstate.getState();
       this.io.emit("state", this.rstate.getState());
     });
 

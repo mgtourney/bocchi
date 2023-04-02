@@ -1,7 +1,7 @@
 <script lang="ts">
   import { io } from "$lib/socket";
+  import type { Match, Player, State } from "shared/relayTypes";
   import { Models, Packets } from "tournament-assistant-client";
-  import type { Match, Player, State } from "$lib/relayTypes";
 
   function redirectToMatch(e: any) {
     if (e.target == null) return;
@@ -15,15 +15,18 @@
     io.emit("SetMatch", e.target.id);
   }
 
-  function formatPlayers(players: Map<string,Player> | undefined) {
+  function formatPlayers(players: Map<string, Player> | undefined) {
+    console.log(players);
     const iterPlayers = players?.values() ?? [];
-
-    return Array.from(iterPlayers).flatMap((player: Player) => player.name).join(" ");
+    return Array.from(iterPlayers)
+      .flatMap((player) => player.name)
+      .join(" ");
   }
 
   let eMatches: Match[] = [];
-  io.on("state", ({ matches }: State) => {
-    eMatches = Array.from(matches.values());
+  io.on("state", (state : State) => {
+    console.log(state)
+    //eMatches = Array.from(state?.matches?.values() ?? []);
   });
 </script>
 
@@ -43,27 +46,28 @@
           <tr>
             <td class="border px-4 py-2 text-center" colspan="4">No Matches</td>
           </tr>
-        {/if}
-        {#each eMatches as match}
-          <tr>
-            <td class="border px-4 py-2 text-center">{match.guid}</td>
-            <td class="border px-4 py-2 text-center"
-              >{match.coordinator.name}</td
-            >
-            <td class="border px-4 py-2 text-center">
-              {formatPlayers(match.players)}
-            </td>
-            <td>
-              <button
-                id={match.guid}
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2"
-                on:click={redirectToMatch}
+        {:else}
+          {#each eMatches as match}
+            <tr>
+              <td class="border px-4 py-2 text-center">{match.guid}</td>
+              <td class="border px-4 py-2 text-center"
+                >{match.coordinator.name}</td
               >
-                Select Match
-              </button>
-            </td>
-          </tr>
-        {/each}
+              <td class="border px-4 py-2 text-center">
+                {formatPlayers(match.players)}
+              </td>
+              <td>
+                <button
+                  id={match.guid}
+                  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2"
+                  on:click={redirectToMatch}
+                >
+                  Select Match
+                </button>
+              </td>
+            </tr>
+          {/each}
+        {/if}
       </tbody>
     </table>
   </div>

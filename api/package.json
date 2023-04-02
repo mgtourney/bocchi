@@ -18,6 +18,7 @@
     "class-validator": "^0.14.0",
     "graphql": "^15.8.0",
     "reflect-metadata": "^0.1.13",
+    "shared": "file:../shared",
     "socket.io": "^4.6.1",
     "tournament-assistant-client": "^0.9.2",
     "type-graphql": "^1.1.1",
