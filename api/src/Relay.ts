@@ -54,6 +54,10 @@ export default class Relay {
         this.rstate.selectMatch(matchId, this.ta);
       });
 
+      socket.on("effect", (type: string) => {
+        socket.broadcast.emit("effect", type);
+      })
+
       socket.on("getPageData", () => {
         socket.emit("pageData", this.rstate.getLastScene().data);
       })

@@ -60,22 +60,22 @@
     // Set the guids of the players and teams per teams
     //console.log(teams)
     teams?.forEach((team) => {
-      if (team1 == undefined) {
+      if (team1 == undefined || teams.find((e) => e.guid == team1) == undefined) {
         team1 = team.guid;
         console.log(team);
         team.playerGUIDs?.forEach((player) => {
-          if (player1 == undefined) {
+          if (player1 == undefined || players?.find((e) => e.guid == player1) == undefined) {
             player1 = player;
-          } else if (player2 == undefined) {
+          } else if (player2 == undefined || players?.find((e) => e.guid == player2) == undefined) {
             player2 = player;
           }
         });
-      } else if (team2 == undefined) {
+      } else if (team2 == undefined || teams.find((e) => e.guid == team2) == undefined) {
         team2 = team.guid;
         team.playerGUIDs?.forEach((player) => {
-          if (player3 == undefined) {
+          if (player3 == undefined || players?.find((e) => e.guid == player3) == undefined) {
             player3 = player;
-          } else if (player4 == undefined) {
+          } else if (player4 == undefined || players?.find((e) => e.guid == player4) == undefined) {
             player4 = player;
           }
         });
@@ -91,9 +91,10 @@
   io.on("realtimeScore", ({ team, player }: RTState) => {
     // Update the RTScore of the player
     let modifiedPlayer = localPlayers.get(player.guid);
+    console.log(modifiedPlayer);
     if (modifiedPlayer != undefined) {
       modifiedPlayer.score = player.score;
-      localTeams.set(player.guid, modifiedPlayer);
+      localPlayers.set(player.guid, modifiedPlayer);
     }
     // Update the RTScore of the team of the player
     let modified = localTeams.get(team.guid);
@@ -103,8 +104,7 @@
     }
     // Calculate the diff
     diff = (
-      localTeams.get(team1)?.score?.accuracy ??
-      1 - (localTeams.get(team2)?.score?.accuracy ?? 1)) * 100;
+      (localTeams.get(team2)?.score?.accuracy ?? 1) - (localTeams.get(team1)?.score?.accuracy ?? 1)) * 100;
   });
   let int: NodeJS.Timer;
 
@@ -205,7 +205,7 @@
       members={`${trunc(localPlayers.get(player3)?.name ?? "")} & ${trunc(localPlayers.get(player4)?.name ?? "")}`}
     />
   </div>
-  <div class="flex h-full items-center justify-center">
+  <div class="flex items-center justify-center h-full">
     <SongTitle
       songName={song?.name ?? "Loading..."}
       songDiff={song?.difficulty ?? "Loading..."}

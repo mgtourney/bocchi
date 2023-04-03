@@ -83,6 +83,7 @@ export class RelayState {
       let memberGUIDs = this.selectedMatch?.teams?.find((team) => team.guid == player.team?.guid)?.playerGUIDs
       if (memberGUIDs == undefined) return;
 
+      player.teamMembersGUIDs = [];
       memberGUIDs.forEach((member) => {
         if (member == player.guid) return;
         player.teamMembersGUIDs?.push(member);
@@ -148,10 +149,15 @@ export class RelayState {
 
   selectMatch(matchGUID: string | undefined, TAClient: Client) {
     if (matchGUID == undefined) return;
+    
     let match = TAClient.getMatch(matchGUID);
     if (match == undefined) return;
-    match.associated_users.push(TAClient.Self.guid);
-    TAClient.updateMatch(match);
+    
+    if (match.associated_users.find((e) => e == TAClient.Self.guid) === undefined) {
+      match.associated_users.push(TAClient.Self.guid);
+      TAClient.updateMatch(match);
+    }
+
     this.selectedMatch = this.matches.find((e) => e.guid == matchGUID);
     this.addMatchFull(match, TAClient);
   }
@@ -178,11 +184,12 @@ export class RelayState {
   ) {
     let teamGUID = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid)?.team?.guid;
     let otherPlayersGUID = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid)?.teamMembersGUIDs;
-    if (teamGUID == undefined || otherPlayersGUID == undefined) return;
-
+    if (teamGUID == undefined || otherPlayersGUID == undefined) return;// come here
+    
     let updatedPlayer = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid);
     if (updatedPlayer == undefined) return;
-
+    
+    console.log(realtimeScore);
     updatedPlayer.score = {
       score: realtimeScore.data.score_with_modifiers,
       accuracy: realtimeScore.data.accuracy,
@@ -204,24 +211,25 @@ export class RelayState {
 
     updatedPlayers.forEach((player) => {
       if (player.score == undefined) return;
-      if (!otherPlayersGUID?.includes(player.guid)) return;
-      cumulScore += player.score.score;
-      cumulAcc += player.score.accuracy;
-      totalAcc += 1;
-      cumulMiss += player.score.misscount;
-      cumulBad += player.score.badcutcount;
-      cumulTotalMiss += player.score.totalmisscount;
+      if (otherPlayersGUID?.includes(player.guid)) {
+        cumulScore += player.score.score;
+        cumulAcc += player.score.accuracy;
+        totalAcc += 1;
+        cumulMiss += player.score.misscount;
+        cumulBad += player.score.badcutcount;
+        cumulTotalMiss += player.score.totalmisscount;
+      }
     });
 
     let updatedTeam = this.selectedMatch?.teams?.find((e) => e.guid == teamGUID);
     if (updatedTeam == undefined) return;
 
     updatedTeam.score = {
-      score: cumulScore + updatedPlayer.score.score,
-      accuracy: (cumulAcc + updatedPlayer.score.accuracy) / (totalAcc + 1),
-      misscount: cumulMiss + updatedPlayer.score.misscount,
-      badcutcount: cumulBad + updatedPlayer.score.badcutcount,
-      totalmisscount: cumulTotalMiss + updatedPlayer.score.totalmisscount,
+      score: cumulScore,
+      accuracy: cumulAcc / totalAcc,
+      misscount: cumulMiss,
+      badcutcount: cumulBad,
+      totalmisscount: cumulTotalMiss
     };
 
     callback({

@@ -7,32 +7,27 @@
 	let delay;
 	let stinger;
 
+	const sceneChange = (msg) => {
+		stinger = msg;
+		setTimeout(() => {
+			delay = msg;
+			goto(`/scenes/${msg}`);
+		}, 1000)
+	}
+
 	onMount(() => {
 		if($page.route.id == "/scenes") {
 			io.emit("getLastSceneChange");
 		}
-		io.on("sendLastSceneChange", (msg) => {
-			stinger = msg;
-			setTimeout(() => {
-				delay = msg;
-				goto(`/scenes/${msg}`);
-			}, 1000)	
-		})
-
-		io.on("ChangeScene", (msg) => {
-			stinger = msg;
-			setTimeout(() => {
-				delay = msg;
-				goto(`/scenes/${msg}`);
-			}, 1000)	
-		});
+		io.on("sendLastSceneChange", (msg) => sceneChange(msg));
+		io.on("ChangeScene", (msg) => sceneChange(msg));
 	})
 </script>
 
 <div class="flex-col justify-center items-center">
-	<div class="fixed top-0 left-0 w-full h-full z-[-2] bg-stone-900" />
+	<div class="fixed top-0 left-0 w-full h-full z-[-100] bg-stone-900" />
 	<video id="bgvid"
-		class="object-cover w-full h-full fixed top-0 left-0 z-[-1] filter brightness-50"
+		class="object-cover w-full h-full fixed top-0 left-0 z-[-90] filter brightness-50"
 		autoplay
 		loop
 		muted
