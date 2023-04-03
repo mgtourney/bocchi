@@ -12,5 +12,4 @@ vite.config.ts.timestamp-*
 *.db
 migrations/
 shared/tsconfig.tsbuildinfo
-.vscode/
 .idea/
