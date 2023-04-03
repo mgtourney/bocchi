@@ -1,7 +1,5 @@
 <script>
   import { io } from "$lib/socket";
-    import { onMount } from "svelte";
-    import { onDestroy } from "svelte/types/runtime/internal/lifecycle";
 
 
   let timerMinutes = 10;

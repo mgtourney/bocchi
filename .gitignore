@@ -14,3 +14,4 @@ migrations/
 shared/tsconfig.tsbuildinfo
 .idea/
 .vscode/
+.history/

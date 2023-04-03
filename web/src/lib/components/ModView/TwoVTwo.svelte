@@ -1,8 +1,9 @@
 <script lang="ts">
   import { io } from "$lib/socket";
   import type { Match, Player, State } from "shared/relayTypes";
-  import { Models, Packets } from "tournament-assistant-client";
+  import { onDestroy, onMount } from "svelte";
 
+  
   function redirectToMatch(e: any) {
     if (e.target == null) return;
     // console.log(e.target.id);
@@ -26,6 +27,18 @@
   io.on("state", (state : State) => {
     console.log(state)
     eMatches = state.matches;
+  });
+
+  let int: NodeJS.Timer;
+
+  onMount(() => {
+    int = setInterval(() => {
+      io.emit("updateState");
+    }, 1000);
+  });
+
+  onDestroy(() => {
+    clearInterval(int);
   });
 </script>
 
