@@ -1,6 +1,6 @@
 <script lang="ts">
   import { io } from "$lib/socket";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { tweened } from "svelte/motion";
 
   let rawTimestampNow: number = (new Date()).getTime();
@@ -9,6 +9,7 @@
   onMount(() => io.emit("getPageData"));
 
   io.on("pageData", (data) => {
+    rawTimestampNow = (new Date()).getTime();
     rawTimestamp = new Date(parseInt(data)).getTime();
   });
 
@@ -48,6 +49,18 @@
         return "";
     }
   }
+
+  let int: NodeJS.Timer;
+
+  onMount(() => {
+    int = setInterval(() => {
+      io.emit("getPageData");
+    }, 1000);
+  });
+
+  onDestroy(() => {
+    clearInterval(int);
+  });
 </script>
 
 <div class="flex flex-col justify-center items-center h-[100vh]">

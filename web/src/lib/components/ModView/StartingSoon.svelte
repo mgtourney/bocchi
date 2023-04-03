@@ -1,18 +1,16 @@
 <script>
   import { io } from "$lib/socket";
+    import { onMount } from "svelte";
+    import { onDestroy } from "svelte/types/runtime/internal/lifecycle";
 
 
   let timerMinutes = 10;
   let timerSeconds = 0;
 
   function apply() {
-    let currentDate = new Date();
-    currentDate.setSeconds(currentDate.getSeconds() + timerSeconds);
-    currentDate.setMinutes(currentDate.getMinutes() + timerMinutes);
-
     io.emit("ChangeScene", {
       page: "starting-soon",
-      data: `${currentDate.getTime()}`
+      data: `${(new Date()).getTime() + (((timerMinutes * 60) + timerSeconds) * 1000)}`
     })
   }
 </script>

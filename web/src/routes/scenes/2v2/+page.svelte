@@ -65,8 +65,10 @@
         console.log(team);
         team.playerGUIDs?.forEach((player) => {
           if (player1 == undefined || players?.find((e) => e.guid == player1) == undefined) {
+            console.log("player1");
             player1 = player;
           } else if (player2 == undefined || players?.find((e) => e.guid == player2) == undefined) {
+            console.log("player2");
             player2 = player;
           }
         });
@@ -74,8 +76,10 @@
         team2 = team.guid;
         team.playerGUIDs?.forEach((player) => {
           if (player3 == undefined || players?.find((e) => e.guid == player3) == undefined) {
+            console.log("player3");
             player3 = player;
           } else if (player4 == undefined || players?.find((e) => e.guid == player4) == undefined) {
+            console.log("player4");
             player4 = player;
           }
         });
