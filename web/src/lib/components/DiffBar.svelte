@@ -3,19 +3,23 @@
   import { tick } from "svelte";
   export let diff: number;
 
-  let barLengthR = tweened(0);
-  let barLengthL = tweened(0);
+  // Tween only diff so that the bar doesn't shift around if the diff changes rapidly around 0
+  let barDiff = tweened(0);
+  $: barDiff.set(diff);
 
-  $: barLengthR.set((diff >= 0) ? (100 - diff) / 2 : 50);
-  $: barLengthL.set((diff < 0) ? (100 - Math.abs(diff)) / 2 : 50);
+  let barLengthR = 0;
+  let barLengthL = 0;
+
+  $: barLengthR = (($barDiff >= 0) ? (100 - $barDiff) / 2 : 50);
+  $: barLengthL = (($barDiff < 0) ? (100 - Math.abs($barDiff)) / 2 : 50);
   
   $: tick();
 </script>
 
 <div class="flex w-full h-3">
-  <div class="bg-bar" style:width={`${$barLengthL}%`}/>
+  <div class="bg-bar" style:width={`${barLengthL}%`}/>
   <div class="flex-grow {diff < 0 ? "bg-blue-600": "bg-orange-600"}"/>
-  <div class="bg-bar" style:width={`${$barLengthR}%`}/>
+  <div class="bg-bar" style:width={`${barLengthR}%`}/>
 </div>
 <style>
   .bg-bar {
