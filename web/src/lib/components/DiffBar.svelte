@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { tweened } from "svelte/motion";
+  import { spring } from "svelte/motion";
   import { tick } from "svelte";
   export let diff: number;
 
-  // Tween only diff so that the bar doesn't shift around if the diff changes rapidly around 0
-  let barDiff = tweened(0);
+  // Spring only diff so that the bar doesn't shift around if the diff changes rapidly around 0
+  let barDiff = spring(0);
   $: barDiff.set(diff);
 
   let barLengthR = 0;

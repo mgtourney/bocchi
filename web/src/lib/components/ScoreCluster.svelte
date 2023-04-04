@@ -1,5 +1,6 @@
 <script lang="ts">
   import { io } from "$lib/socket";
+  import { spring, tweened } from "svelte/motion";
   import type { RTState } from "shared/relayTypes";
 
   export let teamGUID: string = "bobross";
@@ -9,14 +10,18 @@
   let accuracy = 100;
   let score = 0;
 
+  let accText = spring(0);
+  $: accText.set(accuracy);
+
   io.on("realtimeScore", ({ team }: RTState) => {
-    if(team.guid === teamGUID) {
+    if (team.guid === teamGUID) {
       missCount = team.score.totalmisscount;
       accuracy = Math.round(team.score.accuracy * 10000) / 100;
       score = team.score.score;
     }
   });
 </script>
+
 <div class="flex-col">
   <div class="flex">
     {#if !flipped}
@@ -35,10 +40,10 @@
   </div>
 
   {#if flipped}
-    <h1 class="m-2 acc-text flip">{accuracy}%</h1>
+    <h1 class="m-2 acc-text flip">{$accText.toFixed(2)}%</h1>
     <h1 class="m-2 score-text flip">{score}</h1>
   {:else}
-    <h1 class="m-2 acc-text unflip">{accuracy}%</h1>
+    <h1 class="m-2 acc-text unflip">{$accText.toFixed(2)}%</h1>
     <h1 class="m-2 score-text unflip">{score}</h1>
   {/if}
 </div>
