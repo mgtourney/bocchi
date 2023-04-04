@@ -9,7 +9,7 @@
   import { gql } from "graphql-request";
   import { GQL } from "$lib/constants";
   import type { Player, RTState, Song, State, Team } from "shared/relayTypes";
-  import { onMount, onDestroy } from "svelte";
+  import { onMount, onDestroy, tick } from "svelte";
 
   let globalScale = 0.412;
 
@@ -56,7 +56,9 @@
     // });
   }
 
-  io.on("state", ({ teams, players, selectedMatch }: State) => {
+  io.on("state", async ({ teams, players, selectedMatch }: State) => {
+    await tick();
+
     // Set the guids of the players and teams per teams
     //console.log(teams)
     teams?.forEach((team) => {
@@ -65,26 +67,24 @@
         console.log(team);
         team.playerGUIDs?.forEach((player) => {
           if (player1 == undefined || players?.find((e) => e.guid == player1) == undefined) {
-            console.log("player1");
             player1 = player;
           } else if (player2 == undefined || players?.find((e) => e.guid == player2) == undefined) {
-            console.log("player2");
             player2 = player;
           }
         });
+
       } else if (team2 == undefined || teams.find((e) => e.guid == team2) == undefined) {
         team2 = team.guid;
         team.playerGUIDs?.forEach((player) => {
           if (player3 == undefined || players?.find((e) => e.guid == player3) == undefined) {
-            console.log("player3");
             player3 = player;
           } else if (player4 == undefined || players?.find((e) => e.guid == player4) == undefined) {
-            console.log("player4");
             player4 = player;
           }
         });
       }
     });
+
     // Update the state of everything
     teams?.forEach((team) => localTeams.set(team.guid, team));
     players?.forEach((player) => localPlayers.set(player.guid, player));
@@ -92,29 +92,33 @@
     song = selectedMatch?.song;
   });
 
-  io.on("realtimeScore", ({ team, player }: RTState) => {
+  io.on("realtimeScore", async ({ team, player }: RTState) => {
+    await tick();
+
     // Update the RTScore of the player
     let modifiedPlayer = localPlayers.get(player.guid);
-    console.log(modifiedPlayer);
     if (modifiedPlayer != undefined) {
       modifiedPlayer.score = player.score;
       localPlayers.set(player.guid, modifiedPlayer);
+      localPlayers = localPlayers;
     }
     // Update the RTScore of the team of the player
-    let modified = localTeams.get(team.guid);
-    if (modified != undefined) {
-      modified.score = team.score;
-      localTeams.set(team.guid, modified);
+    let modifiedTeam = localTeams.get(team.guid);
+    if (modifiedTeam != undefined) {
+      modifiedTeam.score = team.score;
+      localTeams.set(team.guid, modifiedTeam);
+      localTeams = localTeams;
     }
     // Calculate the diff
-    diff = (
-      (localTeams.get(team2)?.score?.accuracy ?? 1) - (localTeams.get(team1)?.score?.accuracy ?? 1)) * 100;
+    diff = ((localTeams.get(team2)?.score?.accuracy ?? 1) - (localTeams.get(team1)?.score?.accuracy ?? 1)) * 100;
   });
+
   let int: NodeJS.Timer;
 
   onMount(() => {
-    int = setInterval(() => {
+    int = setInterval(() => { // rust async closures when
       io.emit("updateState");
+      console.log(localPlayers);
     }, 1000);
   });
 
