@@ -12,6 +12,8 @@
     "sourceMap": true,
   },
   "references": [
-    { "path": "../shared" }
+    {
+      "path": "../shared/tsconfig.json"
+    }
   ]
 }
