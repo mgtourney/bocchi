@@ -8,11 +8,13 @@ import {
 import { Server } from "socket.io";
 import type { RTState } from "shared/relayTypes"; // fix this skkeye lmao // f u
 import { RelayState } from "../lib/RelayState";
+import http from "http";
 
 export default class Relay {
   ta: Client;
   io: Server;
   rstate: RelayState = new RelayState();
+  http: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>;
 
   constructor() {
     this.ta = new Client("Magnesium Overlay", {
@@ -23,10 +25,11 @@ export default class Relay {
       },
     });
 
-    this.io = new Server(3173, {
+    this.http = http.createServer().listen(3173, '0.0.0.0');
+    this.io = new Server(this.http, {
       cors: {
-        origin: '*', // dev workaround
-      }
+        origin: "*",
+      },
     });
 
     this.setSocketListeners();
