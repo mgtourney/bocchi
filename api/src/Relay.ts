@@ -23,7 +23,7 @@ export default class Relay {
       },
     });
 
-    this.io = new Server(3000, {
+    this.io = new Server(3173, {
       cors: {
         origin: '*', // dev workaround
       }
