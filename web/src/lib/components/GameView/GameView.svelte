@@ -35,7 +35,7 @@
   }
   
   GQL.request(twitch_query, { where: { steam: steamId } }).then((val: any) => {
-    console.log(val);
+    // console.log(val);
     twitchName = val.getPlayer.socials.twitch; // the fuck the live share's still open? LMAO
   })
 </script>

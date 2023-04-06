@@ -21,7 +21,7 @@ async function main() {
     })
 
     new Relay();
-    await server.listen(4000).then(({ url }) => {
+    await server.listen(4000, '0.0.0.0').then(({ url }) => {
         console.log(`🚀 Server ready at: ${url}`)
     })
 }

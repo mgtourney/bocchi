@@ -3,7 +3,6 @@
   import { onMount } from "svelte";
   import MiniScoreCluster from "$lib/components/GameView/MiniScoreCluster.svelte";
 
-  export let playerName: string;
   export let playerId: string = "1";
   export let flipped: boolean = false;
 
@@ -43,7 +42,7 @@
 
       <!-- Name -->
       <h1 class="text-3xl leading-10 font-bold text-[#FFFFFFC0] text-ellipsis ease-in-out duration-500">
-        {playerName}
+        {data?.name ?? "Loading..."}
       </h1>
     </div>
     <div class="w-full"/>
@@ -75,7 +74,7 @@
 
       <!-- Name -->
       <h1 class="text-3xl leading-10 font-bold text-[#FFFFFFC0] text-ellipsis">
-        {playerName}
+        {data?.name ?? "Loading..."}
       </h1>
     </div>
     <div class="w-full"/>

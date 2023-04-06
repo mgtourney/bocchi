@@ -3,6 +3,7 @@
   import TwoVTwo from "$lib/components/ModView/TwoVTwo.svelte";
   import Players from "$lib/components/ModView/Players.svelte";
   import Teams from "$lib/components/ModView/Teams.svelte";
+  import Match from "$lib/components/ModView/Match.svelte";
 
   import type { PageData } from "./$types";
 
@@ -17,4 +18,6 @@
   <Players />
 {:else if data.path === "teams"}
   <Teams />
+{:else if data.path === "match"}
+  <Match />
 {/if}

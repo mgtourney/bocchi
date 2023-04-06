@@ -18,7 +18,10 @@ export const scenes = [
   {
     name: "Pre 1v1",
     id: "pre-1v1",
-  },
+  }
+];
+
+export const settings = [
   {
     name: "Players",
     id: "players"
@@ -29,4 +32,11 @@ export const scenes = [
   }
 ];
 
-export const GQL = new GraphQLClient("http://localhost:4000/graphql", {});
+export const subScenes = [
+  {
+    name: "Match",
+    id: "match"
+  }
+]
+
+export const GQL = new GraphQLClient("http://127.0.0.1:4000/graphql", {});

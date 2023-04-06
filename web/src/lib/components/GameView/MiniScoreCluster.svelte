@@ -6,7 +6,6 @@
   export let accuracy: number;
 
   let accText = spring(0);
-
   $: accText.set(accuracy);
 </script>
 
@@ -26,11 +25,16 @@
       <h1 class="m-2 misses">{missCount}</h1>
     {/if}
   </div>
-  {#if flipped}
-    <h1 class="m-2 acc-text flip">{$accText.toFixed(2)}%</h1>
-  {:else}
-    <h1 class="m-2 acc-text unflip">{$accText.toFixed(2)}%</h1>
-  {/if}
+
+  <div class="flex">
+    {#if !flipped}
+      <h1 class="m-2 acc-text unflip">{$accText.toFixed(2)}%</h1>
+    {/if}
+
+    {#if flipped}
+      <h1 class="m-2 acc-text flip">{$accText.toFixed(2)}%</h1>
+    {/if}
+  </div>
 </div>
 
 <style>

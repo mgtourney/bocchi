@@ -61,6 +61,10 @@ export default class Relay {
       socket.on("getPageData", () => {
         socket.emit("pageData", this.rstate.getLastScene().data);
       })
+
+      socket.on("setTeamPoints", (teamGUID: string, points: number) => {
+        this.rstate.setTeamPoints(teamGUID, points);
+      })
     });
   }
 

@@ -55,7 +55,7 @@ export class RelayState {
         };
       }
 
-      team.playerGUIDs?.push(player.guid); //TODO: some fuckery here
+      if (!team.playerGUIDs.includes(player.guid)) team.playerGUIDs?.push(player.guid); //TODO: some fuckery here
       console.log(team)
     });
 

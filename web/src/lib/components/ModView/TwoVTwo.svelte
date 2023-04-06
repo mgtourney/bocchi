@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { io } from "$lib/socket";
   import type { Match, Player, State } from "shared/relayTypes";
   import { onDestroy, onMount } from "svelte";
@@ -8,9 +9,11 @@
     if (e.target == null) return;
     // console.log(e.target.id);
 
-    io.emit("ChangeScene", {
-      page: "2v2"
-    });
+    // io.emit("ChangeScene", {
+    //   page: "2v2"
+    // });
+
+    goto("/modview/match");
 
     io.emit("SetMatch", e.target.id);
   }
@@ -25,16 +28,17 @@
 
   let eMatches: Match[] = [];
   io.on("state", (state : State) => {
-    console.log(state)
     eMatches = state.matches;
   });
 
   let int: NodeJS.Timer;
 
   onMount(() => {
-    int = setInterval(() => {
-      io.emit("updateState");
-    }, 1000);
+    if (int == undefined) {
+      int = setInterval(() => {
+        io.emit("updateState");
+      }, 1000);
+    }
   });
 
   onDestroy(() => {

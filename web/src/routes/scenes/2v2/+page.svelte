@@ -13,47 +13,52 @@
 
   let globalScale = 0.412;
 
-  let song: Song | undefined;
   let team1: string;
   let team2: string;
   let localTeams: Map<string, Team> = new Map<string, Team>();
+  
   let player1: string;
   let player2: string;
   let player3: string;
   let player4: string;
   let localPlayers: Map<string, Player> = new Map<string, Player>();
+  
   let diff: number = 0;
+  let song: Song | undefined;
 
   // please for the love of god end me.  - niko@velvet.moe
-  let qTeams: Map<string, any> = new Map();
+  let qTeams: any[] = []
 
   function updateTeam(id: string) {
-    // let query = gql`
-    //   query Query($where: PlayerWhereUniqueInput!) {
-    //     getPlayer(where: $where) {
-    //       team
-    //     }
-    //   }
-    // `;
-    // GQL.request(query, { where: { steam: id } }).then((val: any) => {
-    //   //console.log(val)
-    //   let query = gql`
-    //     query Query($where: TeamWhereUniqueInput!) {
-    //       getTeam(where: $where) {
-    //         name
-    //         logo
-    //       }
-    //     }
-    //   `;
-    //   GQL.request(query, { where: { id: val.getPlayer.team } }).then(
-    //     (val: any) => {
-    //       // console.log(val)
-    //       qTeams.set(id, val.getTeam);
-    //     }
-    //   );
-    // }).catch(() => {
-    //   return;
-    // });
+    let query = gql`
+      query Query($where: PlayerWhereUniqueInput!) {
+        getPlayer(where: $where) {
+          team
+        }
+      }
+    `;
+    GQL.request(query, { where: { steam: id } }).then((val: any) => {
+      //console.log(val)
+      let query = gql`
+        query Query($where: TeamWhereUniqueInput!) {
+          getTeam(where: $where) {
+            name
+            logo
+            id
+          }
+        }
+      `;
+
+      GQL.request(query, { where: { id: val.getPlayer.team } }).then(
+        (val: any) => {
+          if (val.getTeam != null) {
+            if (!qTeams.includes(val.getTeam))
+              qTeams.push(val.getTeam);
+              qTeams = qTeams;
+          }
+        }
+      );
+    });
   }
 
   io.on("state", async ({ teams, players, selectedMatch }: State) => {
@@ -64,9 +69,9 @@
     teams?.forEach((team) => {
       if (team1 == undefined || teams.find((e) => e.guid == team1) == undefined) {
         team1 = team.guid;
-        console.log(team);
         team.playerGUIDs?.forEach((player) => {
           if (player1 == undefined || players?.find((e) => e.guid == player1) == undefined) {
+            updateTeam((players?.find((e) => e.guid == player)?.steamid) ?? "")
             player1 = player;
           } else if (player2 == undefined || players?.find((e) => e.guid == player2) == undefined) {
             player2 = player;
@@ -77,6 +82,7 @@
         team2 = team.guid;
         team.playerGUIDs?.forEach((player) => {
           if (player3 == undefined || players?.find((e) => e.guid == player3) == undefined) {
+            updateTeam((players?.find((e) => e.guid == player)?.steamid) ?? "");
             player3 = player;
           } else if (player4 == undefined || players?.find((e) => e.guid == player4) == undefined) {
             player4 = player;
@@ -89,6 +95,8 @@
     teams?.forEach((team) => localTeams.set(team.guid, team));
     players?.forEach((player) => localPlayers.set(player.guid, player));
 
+    localTeams = localTeams;
+    
     song = selectedMatch?.song;
   });
 
@@ -118,7 +126,7 @@
   onMount(() => {
     int = setInterval(() => { // rust async closures when
       io.emit("updateState");
-      console.log(localPlayers);
+      // console.log(localPlayers);
     }, 1000);
   });
 
@@ -201,15 +209,15 @@
   </div>
   <div class="flex items-center justify-center">
     <TeamInfo
-      avatar={localTeams.get(team1)?.avatar}
-      name={localTeams.get(team1)?.name}
+      avatar={qTeams[0]?.logo}
+      name={qTeams[0]?.name}
       members={`${trunc(localPlayers.get(player1)?.name ?? "")} & ${trunc(localPlayers.get(player2)?.name ?? "")}`}
     />
     <div class="w-full" />
     <TeamInfo
       flipped={true}
-      avatar={localTeams.get(team2)?.avatar}
-      name={localTeams.get(team2)?.name}
+      avatar={qTeams[1]?.logo}
+      name={qTeams[1]?.name}
       members={`${trunc(localPlayers.get(player3)?.name ?? "")} & ${trunc(localPlayers.get(player4)?.name ?? "")}`}
     />
   </div>
@@ -218,13 +226,5 @@
       songName={song?.name ?? "Loading..."}
       songDiff={song?.difficulty ?? "Loading..."}
     />
-    <!-- <marquee
-  direction="down"
-  width="250"
-  height="200"
-  behavior="alternate"
-  style="border:solid">
-  <marquee class="text-white" behavior="alternate"> seven twenty seven </marquee>
-</marquee> -->
   </div>
 </div>
