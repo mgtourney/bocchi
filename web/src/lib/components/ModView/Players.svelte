@@ -13,27 +13,23 @@
   let teams: any = [];
 
   function GetAllPlayers() {
-    request(
-      "http://localhost:4000/graphql",
-      `
-    query GetAllPlayers {
-    players {
-      name
-      steam
-      team
-      socials {
-        discord,
-        twitch
-      }    
-    }
-  }`
-    )
-      .then((data: any) => {
-        players = data.players;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    let query = gql`
+      query GetAllPlayers {
+        players {
+          name
+          steam
+          team
+          socials {
+            discord
+            twitch
+          }
+        }
+      }
+    `;
+
+    GQL.request(query).then((e: any) => {
+      players = e.players;
+    });
   }
 
   function addPlayer(
@@ -72,14 +68,17 @@
       },
     };
 
-    GQL.request(mutation, varible).then((val:any ) => {
+    GQL.request(mutation, varible).then((val: any) => {
       GetAllPlayers();
     });
   }
 
   function deletePlayer(steam: string) {
     let mutation = gql`
-      mutation DeleteOnePlayer($where: PlayerWhereUniqueInput!, $socialsWhere: SocialsWhereUniqueInput!) {
+      mutation DeleteOnePlayer(
+        $where: PlayerWhereUniqueInput!
+        $socialsWhere: SocialsWhereUniqueInput!
+      ) {
         deleteOnePlayer(where: $where) {
           name
           steam
@@ -89,7 +88,7 @@
             discord
           }
         }
-        
+
         deleteOneSocials(where: $socialsWhere) {
           twitch
           steam
@@ -103,12 +102,12 @@
         steam,
       },
       socialsWhere: {
-        steam
-      }
+        steam,
+      },
     };
 
-    GQL.request(mutation, varible).then((val:any ) => {
-      GetAllPlayers()
+    GQL.request(mutation, varible).then((val: any) => {
+      GetAllPlayers();
     });
   }
 
@@ -154,7 +153,11 @@
           <tr>
             <td class="border p-2">{player.steam}</td>
             <td class="border p-2">{player.name}</td>
-            <td class="border p-2">{teams.filter((e) => e.id === player.team).flatMap((e) => e.name)}</td>
+            <td class="border p-2"
+              >{teams
+                .filter((e) => e.id == player.team)
+                .flatMap((e) => e.name)}</td
+            >
             <td class="border p-2">{player.socials?.twitch}</td>
             <td class="border p-2">{player.socials?.discord}</td>
             <td class="border p-2">
@@ -200,7 +203,11 @@
         class="mb-2 bg-gray-800 rounded border border-gray-400"
       />
       <label for="team_select">Select A Team</label>
-      <select bind:value={team} id="team_select" class="mb-2 bg-gray-800 rounded border border-gray-400" >
+      <select
+        bind:value={team}
+        id="team_select"
+        class="mb-2 bg-gray-800 rounded border border-gray-400"
+      >
         <option value={null}>No Team</option>
         {#each teams as t}
           <option value={t.id}>{t.name}</option>
