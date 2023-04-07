@@ -4,9 +4,9 @@
 </script>
 
 {#key stinger}
+  <!-- svelte-ignore a11y-media-has-caption -->
   <video
     class="w-full h-full object-cover fixed top-0 left-0 z-50"
-    muted
     autoplay
     playsinline
     disablePictureInPicture
