@@ -94,6 +94,14 @@
     });
   }
 
+  function redirectToPost(e: any) {
+    if (e.target == null) return;
+    io.emit("ChangeScene", {
+        page: "post-2v2",
+    });
+  }
+
+
   let int: NodeJS.Timer;
 
   onMount(() => {
@@ -185,6 +193,10 @@
     <button
       class="flex items-center justify-center w-[25vw] p-2 text-5xl text-white bg-purple-500 rounded text-bold"
       on:click={redirectToMatch}>Activate Scene</button
+    >
+    <button
+      class="flex items-center justify-center w-[25vw] p-2 text-5xl text-white bg-purple-500 rounded text-bold"
+      on:click={redirectToPost}>Post 2v2</button
     >
   </div>
 </div>

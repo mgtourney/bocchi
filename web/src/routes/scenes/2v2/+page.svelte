@@ -11,7 +11,9 @@
   import type { Player, RTState, Song, State, Team } from "shared/relayTypes";
   import { onMount, onDestroy, tick } from "svelte";
 
-  let globalScale = 0.412;
+  //! The meaning of life, the universe, and everything.
+  //! If you change this number, you will be cursed by the gods of the internet.
+  let globalScale = 0.41203703703703727; 
 
   let team1: string;
   let team2: string;

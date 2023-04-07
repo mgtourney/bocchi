@@ -1,5 +1,5 @@
 import ioClient from 'socket.io-client';
-const ENDPOINT = "https://socket.magnesium.gg"
+const ENDPOINT = "http://localhost:3173";
 
 const socket = ioClient(ENDPOINT)
 export const io = socket

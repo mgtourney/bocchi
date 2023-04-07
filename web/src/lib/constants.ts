@@ -39,4 +39,4 @@ export const subScenes = [
   }
 ]
 
-export const GQL = new GraphQLClient("https://api.magnesium.gg/graphql", {});
+export const GQL = new GraphQLClient("http://127.0.0.1:4000/graphql", {});
