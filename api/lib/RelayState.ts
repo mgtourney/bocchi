@@ -47,22 +47,22 @@ export class RelayState {
         this.playerScores.clear();
         this.selectedMatch?.players?.forEach((player: Player) => {
           player.score = {
-            points: 0,
             score: 0,
             accuracy: 1,
             misscount: 0,
             badcutcount: 0,
             totalmisscount: 0,
+            ...player.score,
           };
         })
         this.selectedMatch?.teams?.forEach((team: Team) => {
           team.score = {
-            points: 0,
             score: 0,
             accuracy: 1,
             misscount: 0,
             badcutcount: 0,
             totalmisscount: 0,
+            ...team.score,
           };
         })
       })
