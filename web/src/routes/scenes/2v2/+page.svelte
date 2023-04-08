@@ -211,16 +211,16 @@
   </div>
   <div class="flex items-center justify-center">
     <TeamInfo
-      avatar={qTeams[0]?.logo}
-      name={qTeams[0]?.name}
-      members={`${trunc(localPlayers.get(player1)?.name ?? "")} & ${trunc(localPlayers.get(player3)?.name ?? "")}`}
+      avatar={qTeams[1]?.logo}
+      name={qTeams[1]?.name}
+      members={`${trunc(localPlayers.get(player2)?.name ?? "")} & ${trunc(localPlayers.get(player3)?.name ?? "")}`}
     />
     <div class="w-full" />
     <TeamInfo
       flipped={true}
-      avatar={qTeams[1]?.logo}
-      name={qTeams[1]?.name}
-      members={`${trunc(localPlayers.get(player2)?.name ?? "")} & ${trunc(localPlayers.get(player4)?.name ?? "")}`}
+      avatar={qTeams[0]?.logo}
+      name={qTeams[0]?.name}
+      members={`${trunc(localPlayers.get(player1)?.name ?? "")} & ${trunc(localPlayers.get(player4)?.name ?? "")}`}
     />
   </div>
   <div class="flex items-center justify-center h-full">
