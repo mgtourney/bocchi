@@ -15,6 +15,7 @@
   "dependencies": {
     "@prisma/client": "^4.11.0",
     "apollo-server": "^3.12.0",
+    "async-lock": "^1.4.0",
     "class-validator": "^0.14.0",
     "graphql": "^15.8.0",
     "reflect-metadata": "^0.1.13",
@@ -26,6 +27,7 @@
     "typegraphql-prisma": "^0.24.4"
   },
   "devDependencies": {
+    "@types/async-lock": "^1.4.0",
     "nodemon": "^2.0.22",
     "prisma": "^4.11.0"
   }

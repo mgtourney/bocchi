@@ -1,3 +1,4 @@
+import AsyncLock from "async-lock";
 import { Match, LastScene, Player, Team, Score } from "shared/relayTypes";
 
 import {
@@ -24,6 +25,7 @@ interface TeamScore {
 export class RelayState {
   selectedMatch?: Match;
   private matches: Match[] = [];
+  private scoresLock = new AsyncLock();
   private playerScores: Map<string, TeamScore> = new Map();
   private lastScene: LastScene = {
     page: "not-live",
@@ -198,57 +200,51 @@ export class RelayState {
     realtimeScore: TAEvents.PacketEvent<Packets.Push.RealtimeScore>,
     callback: CallableFunction
   ) {
-    let teamGUID = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid)?.team?.guid;
-    let otherPlayersGUID = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid)?.teamMembersGUIDs;
-    if (teamGUID == undefined || otherPlayersGUID == undefined) return;// come here
-
-    let updatedPlayer = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid);
-    if (updatedPlayer == undefined) return;
-
-    updatedPlayer.score = {
-      score: realtimeScore.data.score_with_modifiers,
-      accuracy: realtimeScore.data.accuracy,
-      misscount: realtimeScore.data.scoreTracker.notesMissed,
-      badcutcount: realtimeScore.data.scoreTracker.badCuts,
-      totalmisscount:
-        realtimeScore.data.scoreTracker.notesMissed +
-        realtimeScore.data.scoreTracker.badCuts,
-    };
-
-    this.playerScores.set(updatedPlayer.guid, <TeamScore>{ teamGUID: teamGUID, score: updatedPlayer.score })
-
-    // if (!this.teamScores.has(player)) {
-    //   this.teamScores.set(, )
-    // } else {
-    //   let teamScore = this.teamScores.get(teamGUID)!
-    //   teamScore.accuracy += 
-    //   this.teamScores.set(teamGUID, teamScore)
-    // }
-    let teamLen = Array.from(this.playerScores.values()).filter((e) => e.teamGUID == teamGUID).length;
-    let teamScore = Array.from(this.playerScores.values()).filter((e) => e.teamGUID == teamGUID).reduce((a, b) => <TeamScore>{
-      teamGUID: teamGUID,
-      score: {
-        score: a.score.score + b.score.score,
-        accuracy: a.score.accuracy + b.score.accuracy,
-        misscount: a.score.misscount + b.score.misscount,
-        badcutcount: a.score.badcutcount + b.score.badcutcount,
-        totalmisscount: a.score.totalmisscount + b.score.totalmisscount
-      }
-    }).score;
-    teamScore.accuracy = teamScore.accuracy / teamLen;
-    // teamScore.points = this.selectedMatch?.teams?.find((e) => e.guid == teamGUID)?.score?.points;
-    this.selectedMatch!.teams = this.selectedMatch!.teams?.map((e) => e.guid == teamGUID ? {...e, score: {...teamScore}} : e)
-
-    callback({
-      team: {
-        guid: teamGUID,
-        score: teamScore,
-      },
-      player: {
-        guid: updatedPlayer.guid,
-        score: updatedPlayer.score,
-      },
-    });
+    this.scoresLock.acquire('scores', () => {
+      let teamGUID = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid)?.team?.guid;
+      let otherPlayersGUID = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid)?.teamMembersGUIDs;
+      if (teamGUID == undefined || otherPlayersGUID == undefined) return;// come here
+  
+      let updatedPlayer = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid);
+      if (updatedPlayer == undefined) return;
+  
+      updatedPlayer.score = {
+        score: realtimeScore.data.score_with_modifiers,
+        accuracy: realtimeScore.data.accuracy,
+        misscount: realtimeScore.data.scoreTracker.notesMissed,
+        badcutcount: realtimeScore.data.scoreTracker.badCuts,
+        totalmisscount:
+          realtimeScore.data.scoreTracker.notesMissed +
+          realtimeScore.data.scoreTracker.badCuts,
+      };
+      this.playerScores.set(updatedPlayer.guid, <TeamScore>{ teamGUID: teamGUID, score: updatedPlayer.score })
+      let teamLen = Array.from(this.playerScores.values()).filter((e) => e.teamGUID == teamGUID).length;
+      let teamScore = Array.from(this.playerScores.values()).filter((e) => e.teamGUID == teamGUID).reduce((a, b) => <TeamScore>{
+        teamGUID: teamGUID,
+        score: {
+          score: a.score.score + b.score.score,
+          accuracy: a.score.accuracy + b.score.accuracy,
+          misscount: a.score.misscount + b.score.misscount,
+          badcutcount: a.score.badcutcount + b.score.badcutcount,
+          totalmisscount: a.score.totalmisscount + b.score.totalmisscount
+        }
+      }).score;
+      teamScore.accuracy = teamScore.accuracy / teamLen;
+      // teamScore.points = this.selectedMatch?.teams?.find((e) => e.guid == teamGUID)?.score?.points;
+      this.selectedMatch!.teams = this.selectedMatch!.teams?.map((e) => e.guid == teamGUID ? {...e, score: {...teamScore}} : e)
+  
+      callback({
+        team: {
+          guid: teamGUID,
+          score: teamScore,
+        },
+        player: {
+          guid: updatedPlayer.guid,
+          score: updatedPlayer.score,
+        },
+      });
+      return;
+    })
   }
 
   getLastScene() {
