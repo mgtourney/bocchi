@@ -8,35 +8,28 @@
   import { io } from "$lib/socket";
   import { gql } from "graphql-request";
   import { GQL } from "$lib/constants";
-  import type {
-    Player,
-    RTState,
-    Score,
-    Song,
-    State,
-    Team,
-  } from "shared/relayTypes";
+  import type { Player, RTState, Song, State, Team } from "shared/relayTypes";
   import { onMount, onDestroy, tick } from "svelte";
 
   //! The meaning of life, the universe, and everything.
   //! If you change this number, you will be cursed by the gods of the internet.
-  let globalScale = 0.41203703703703727;
+  let globalScale = 0.41203703703703727; 
 
   let team1: string;
   let team2: string;
   let localTeams: Map<string, Team> = new Map<string, Team>();
-
+  
   let player1: string;
   let player2: string;
   let player3: string;
   let player4: string;
   let localPlayers: Map<string, Player> = new Map<string, Player>();
-
+  
   let diff: number = 0;
   let song: Song | undefined;
 
   // please for the love of god end me.  - niko@velvet.moe
-  let qTeams: any[] = [];
+  let qTeams: any[] = []
 
   function updateTeam(id: string) {
     let query = gql`
@@ -61,8 +54,9 @@
       GQL.request(query, { where: { id: val.getPlayer.team } }).then(
         (val: any) => {
           if (val.getTeam != null) {
-            if (!qTeams.includes(val.getTeam)) qTeams.push(val.getTeam);
-            qTeams = qTeams;
+            if (!qTeams.includes(val.getTeam))
+              qTeams.push(val.getTeam);
+              qTeams = qTeams;
           }
         }
       );
@@ -70,53 +64,31 @@
   }
 
   io.on("state", async ({ teams, players, selectedMatch }: State) => {
-    if (
-      teams == undefined ||
-      players == undefined ||
-      selectedMatch == undefined
-    )
-      return;
+    if (teams == undefined || players == undefined || selectedMatch == undefined) return;
     if (players[0].playing ?? false) return;
-
+    
     await tick();
     // Set the guids of the players and teams per teams
     //console.log(teams)
     teams?.forEach((team) => {
-      if (
-        team1 == undefined ||
-        teams.find((e) => e.guid == team1) == undefined
-      ) {
+      if (team1 == undefined || teams.find((e) => e.guid == team1) == undefined) {
         team1 = team.guid;
         team.playerGUIDs?.forEach((player) => {
-          if (
-            player1 == undefined ||
-            players?.find((e) => e.guid == player1) == undefined
-          ) {
-            updateTeam(players?.find((e) => e.guid == player)?.steamid ?? "");
+          if (player1 == undefined || players?.find((e) => e.guid == player1) == undefined) {
+            updateTeam((players?.find((e) => e.guid == player)?.steamid) ?? "")
             player1 = player;
-          } else if (
-            player2 == undefined ||
-            players?.find((e) => e.guid == player2) == undefined
-          ) {
+          } else if (player2 == undefined || players?.find((e) => e.guid == player2) == undefined) {
             player2 = player;
           }
         });
-      } else if (
-        team2 == undefined ||
-        teams.find((e) => e.guid == team2) == undefined
-      ) {
+
+      } else if (team2 == undefined || teams.find((e) => e.guid == team2) == undefined) {
         team2 = team.guid;
         team.playerGUIDs?.forEach((player) => {
-          if (
-            player3 == undefined ||
-            players?.find((e) => e.guid == player3) == undefined
-          ) {
-            updateTeam(players?.find((e) => e.guid == player)?.steamid ?? "");
+          if (player3 == undefined || players?.find((e) => e.guid == player3) == undefined) {
+            updateTeam((players?.find((e) => e.guid == player)?.steamid) ?? "");
             player3 = player;
-          } else if (
-            player4 == undefined ||
-            players?.find((e) => e.guid == player4) == undefined
-          ) {
+          } else if (player4 == undefined || players?.find((e) => e.guid == player4) == undefined) {
             player4 = player;
           }
         });
@@ -128,31 +100,11 @@
     players?.forEach((player) => localPlayers.set(player.guid, player));
 
     localTeams = localTeams;
-
+    
     song = selectedMatch?.song;
   });
 
-  // io.on("realtimeScore", async ({ team, player }: RTState) => {
-  //   await tick();
-
-  //   // Update the RTScore of the player
-  //   let modifiedPlayer = localPlayers.get(player.guid);
-  //   if (modifiedPlayer != undefined) {
-  //     modifiedPlayer.score = player.score;
-  //     localPlayers.set(player.guid, modifiedPlayer);
-  //     localPlayers = localPlayers;
-  //   }
-  //   // Update the RTScore of the team of the player
-  //   let modifiedTeam = localTeams.get(team.guid);
-  //   if (modifiedTeam != undefined) {
-  //     modifiedTeam.score = team.score;
-  //     localTeams.set(team.guid, modifiedTeam);
-  //     localTeams = localTeams;
-  //   }
-  //   // Calculate the diff
-  //   diff = ((localTeams.get(team2)?.score?.accuracy ?? 1) - (localTeams.get(team1)?.score?.accuracy ?? 1)) * 100;
-  // });
-  io.on("realtimeScore", async ({ player }: RTState) => {
+  io.on("realtimeScore", async ({ team, player }: RTState) => {
     await tick();
 
     // Update the RTScore of the player
@@ -162,43 +114,21 @@
       localPlayers.set(player.guid, modifiedPlayer);
       localPlayers = localPlayers;
     }
-
-    let tGuid = localPlayers.get(player.guid)?.team?.guid;
-    if (tGuid === undefined) return;
-
-    let team = localTeams.get(tGuid);
-    if (team?.score === undefined) return;
-
-    team.score = Array.from(localPlayers.values())
-      .filter((e) => e.team?.guid == tGuid && e.team?.score !== undefined)
-      .flatMap((e) => e.score!)
-      .reduce(
-        (sSum, sCur) =>
-          <Score>{
-            score: sSum.score + sCur.score,
-            accuracy: (sSum.accuracy + sCur.accuracy) / 2,
-            misscount: sSum.misscount + sCur.misscount,
-            badcutcount: sSum.badcutcount + sCur.badcutcount,
-            totalmisscount: sSum.totalmisscount + sCur.totalmisscount,
-          }
-      );
-
-    team.score.points = localTeams.get(tGuid)?.score?.points;
-
-    localTeams.set(tGuid, team);
-    localTeams = localTeams;
+    // Update the RTScore of the team of the player
+    let modifiedTeam = localTeams.get(team.guid);
+    if (modifiedTeam != undefined) {
+      modifiedTeam.score = team.score;
+      localTeams.set(team.guid, modifiedTeam);
+      localTeams = localTeams;
+    }
     // Calculate the diff
-    diff =
-      ((localTeams.get(team2)?.score?.accuracy ?? 1) -
-        (localTeams.get(team1)?.score?.accuracy ?? 1)) *
-      100;
+    diff = ((localTeams.get(team2)?.score?.accuracy ?? 1) - (localTeams.get(team1)?.score?.accuracy ?? 1)) * 100;
   });
 
   let int: NodeJS.Timer;
 
   onMount(() => {
-    int = setInterval(() => {
-      // rust async closures when
+    int = setInterval(() => { // rust async closures when
       io.emit("updateState");
       // console.log(localPlayers);
     }, 1000);
@@ -210,8 +140,8 @@
 
   const trunc = (input: string) =>
     input.length > 10 ? `${input.substring(0, 10)}...` : input;
-
-  const songTrunc = (input: string) =>
+  
+  const songTrunc = (input: string) => 
     input.length > 25 ? `${input.substring(0, 25)}...` : input;
 </script>
 
@@ -222,9 +152,7 @@
       {#if team1 !== undefined}
         <GameView
           playerName={localPlayers.get(player1)?.name}
-          accuracy={Math.round(
-            (localPlayers.get(player1)?.score?.accuracy ?? 1) * 10000
-          ) / 100}
+          accuracy={Math.round((localPlayers.get(player1)?.score?.accuracy ?? 1) * 10000) / 100}
           missCount={localPlayers.get(player1)?.score?.misscount ?? 0}
           steamId={localPlayers.get(player1)?.steamid}
           scale={globalScale}
@@ -232,9 +160,7 @@
         />
         <GameView
           playerName={localPlayers.get(player2)?.name}
-          accuracy={Math.round(
-            (localPlayers.get(player2)?.score?.accuracy ?? 1) * 10000
-          ) / 100}
+          accuracy={Math.round((localPlayers.get(player2)?.score?.accuracy ?? 1) * 10000) / 100}
           missCount={localPlayers.get(player2)?.score?.misscount ?? 0}
           steamId={localPlayers.get(player2)?.steamid}
           scale={globalScale}
@@ -265,9 +191,7 @@
       {#if team2 !== undefined}
         <GameView
           playerName={localPlayers.get(player3)?.name}
-          accuracy={Math.round(
-            (localPlayers.get(player3)?.score?.accuracy ?? 1) * 10000
-          ) / 100}
+          accuracy={Math.round((localPlayers.get(player3)?.score?.accuracy ?? 1) * 10000) / 100}
           missCount={localPlayers.get(player3)?.score?.misscount ?? 0}
           steamId={localPlayers.get(player3)?.steamid}
           scale={globalScale}
@@ -276,9 +200,7 @@
         />
         <GameView
           playerName={localPlayers.get(player4)?.name}
-          accuracy={Math.round(
-            (localPlayers.get(player4)?.score?.accuracy ?? 1) * 10000
-          ) / 100}
+          accuracy={Math.round((localPlayers.get(player4)?.score?.accuracy ?? 1) * 10000) / 100}
           missCount={localPlayers.get(player4)?.score?.misscount ?? 0}
           steamId={localPlayers.get(player4)?.steamid}
           scale={globalScale}
@@ -293,18 +215,14 @@
     <TeamInfo
       avatar={qTeams[0]?.logo}
       name={qTeams[0]?.name}
-      members={`${trunc(localPlayers.get(player1)?.name ?? "")} & ${trunc(
-        localPlayers.get(player2)?.name ?? ""
-      )}`}
+      members={`${trunc(localPlayers.get(player1)?.name ?? "")} & ${trunc(localPlayers.get(player2)?.name ?? "")}`}
     />
     <div class="w-full" />
     <TeamInfo
       flipped={true}
       avatar={qTeams[1]?.logo}
       name={qTeams[1]?.name}
-      members={`${trunc(localPlayers.get(player3)?.name ?? "")} & ${trunc(
-        localPlayers.get(player4)?.name ?? ""
-      )}`}
+      members={`${trunc(localPlayers.get(player3)?.name ?? "")} & ${trunc(localPlayers.get(player4)?.name ?? "")}`}
     />
   </div>
   <div class="flex items-center justify-center h-full">

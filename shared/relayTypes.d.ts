@@ -53,10 +53,10 @@ export interface State {
 }
 
 export interface RTState {
-  // team: {
-  //   guid: string,
-  //   score: Score
-  // };
+  team: {
+    guid: string,
+    score: Score
+  };
   player: {
     guid: string,
     score: Score

@@ -192,9 +192,9 @@ export class RelayState {
     realtimeScore: TAEvents.PacketEvent<Packets.Push.RealtimeScore>,
     callback: CallableFunction
   ) {
-    // let teamGUID = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid)?.team?.guid;
-    // let otherPlayersGUID = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid)?.teamMembersGUIDs;
-    // if (teamGUID == undefined || otherPlayersGUID == undefined) return;// come here
+    let teamGUID = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid)?.team?.guid;
+    let otherPlayersGUID = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid)?.teamMembersGUIDs;
+    if (teamGUID == undefined || otherPlayersGUID == undefined) return;// come here
     
     let updatedPlayer = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid);
     if (updatedPlayer == undefined) return;
@@ -210,43 +210,43 @@ export class RelayState {
         realtimeScore.data.scoreTracker.badCuts,
     };
 
-    // let cumulScore = 0,
-    //   cumulAcc = 0,
-    //   totalAcc = 0,
-    //   cumulMiss = 0,
-    //   cumulBad = 0,
-    //   cumulTotalMiss = 0;
-    // let updatedPlayers = this.selectedMatch?.players;
-    // if (updatedPlayers == undefined) return;
+    let cumulScore = 0,
+      cumulAcc = 0,
+      totalAcc = 0,
+      cumulMiss = 0,
+      cumulBad = 0,
+      cumulTotalMiss = 0;
+    let updatedPlayers = this.selectedMatch?.players;
+    if (updatedPlayers == undefined) return;
 
-    // updatedPlayers.forEach((player) => {
-    //   if (player.score == undefined) return;
-    //   if (otherPlayersGUID?.includes(player.guid)) {
-    //     cumulScore += player.score.score;
-    //     cumulAcc += player.score.accuracy;
-    //     totalAcc += 1;
-    //     cumulMiss += player.score.misscount;
-    //     cumulBad += player.score.badcutcount;
-    //     cumulTotalMiss += player.score.totalmisscount;
-    //   }
-    // });
+    updatedPlayers.forEach((player) => {
+      if (player.score == undefined) return;
+      if (otherPlayersGUID?.includes(player.guid)) {
+        cumulScore += player.score.score;
+        cumulAcc += player.score.accuracy;
+        totalAcc += 1;
+        cumulMiss += player.score.misscount;
+        cumulBad += player.score.badcutcount;
+        cumulTotalMiss += player.score.totalmisscount;
+      }
+    });
 
-    // let updatedTeam = this.selectedMatch?.teams?.find((e) => e.guid == teamGUID);
-    // if (updatedTeam == undefined) return;
+    let updatedTeam = this.selectedMatch?.teams?.find((e) => e.guid == teamGUID);
+    if (updatedTeam == undefined) return;
 
-    // updatedTeam.score = {
-    //   score: cumulScore,
-    //   accuracy: cumulAcc / totalAcc,
-    //   misscount: cumulMiss,
-    //   badcutcount: cumulBad,
-    //   totalmisscount: cumulTotalMiss
-    // };
+    updatedTeam.score = {
+      score: cumulScore,
+      accuracy: cumulAcc / totalAcc,
+      misscount: cumulMiss,
+      badcutcount: cumulBad,
+      totalmisscount: cumulTotalMiss
+    };
 
     callback({
-      // team: {
-      //   guid: updatedTeam.guid,
-      //   score: updatedTeam.score,
-      // },
+      team: {
+        guid: updatedTeam.guid,
+        score: updatedTeam.score,
+      },
       player: {
         guid: updatedPlayer.guid,
         score: updatedPlayer.score,
