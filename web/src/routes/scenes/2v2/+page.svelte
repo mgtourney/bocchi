@@ -157,10 +157,10 @@
           muted={false}
         />
         <GameView
-          playerName={localPlayers.get(player2)?.name}
-          accuracy={Math.round((localPlayers.get(player2)?.score?.accuracy ?? 1) * 10000) / 100}
-          missCount={localPlayers.get(player2)?.score?.misscount ?? 0}
-          steamId={localPlayers.get(player2)?.steamid}
+          playerName={localPlayers.get(player3)?.name}
+          accuracy={Math.round((localPlayers.get(player3)?.score?.accuracy ?? 1) * 10000) / 100}
+          missCount={localPlayers.get(player3)?.score?.misscount ?? 0}
+          steamId={localPlayers.get(player3)?.steamid}
           scale={globalScale}
           muted={true}
           bottom={true}
@@ -188,10 +188,10 @@
     <div class="flex-col">
       {#if team2 !== undefined}
         <GameView
-          playerName={localPlayers.get(player3)?.name}
-          accuracy={Math.round((localPlayers.get(player3)?.score?.accuracy ?? 1) * 10000) / 100}
-          missCount={localPlayers.get(player3)?.score?.misscount ?? 0}
-          steamId={localPlayers.get(player3)?.steamid}
+          playerName={localPlayers.get(player2)?.name}
+          accuracy={Math.round((localPlayers.get(player2)?.score?.accuracy ?? 1) * 10000) / 100}
+          missCount={localPlayers.get(player2)?.score?.misscount ?? 0}
+          steamId={localPlayers.get(player2)?.steamid}
           scale={globalScale}
           muted={true}
           flipped={true}
@@ -213,14 +213,14 @@
     <TeamInfo
       avatar={qTeams[0]?.logo}
       name={qTeams[0]?.name}
-      members={`${trunc(localPlayers.get(player1)?.name ?? "")} & ${trunc(localPlayers.get(player2)?.name ?? "")}`}
+      members={`${trunc(localPlayers.get(player1)?.name ?? "")} & ${trunc(localPlayers.get(player3)?.name ?? "")}`}
     />
     <div class="w-full" />
     <TeamInfo
       flipped={true}
       avatar={qTeams[1]?.logo}
       name={qTeams[1]?.name}
-      members={`${trunc(localPlayers.get(player3)?.name ?? "")} & ${trunc(localPlayers.get(player4)?.name ?? "")}`}
+      members={`${trunc(localPlayers.get(player2)?.name ?? "")} & ${trunc(localPlayers.get(player4)?.name ?? "")}`}
     />
   </div>
   <div class="flex items-center justify-center h-full">
