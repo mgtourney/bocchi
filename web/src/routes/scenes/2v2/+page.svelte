@@ -105,8 +105,6 @@
   });
 
   io.on("realtimeScore", async ({ team, player }: RTState) => {
-    await tick();
-
     // Update the RTScore of the player
     let modifiedPlayer = localPlayers.get(player.guid);
     if (modifiedPlayer != undefined) {

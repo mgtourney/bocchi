@@ -205,7 +205,6 @@ export class RelayState {
     let updatedPlayer = this.selectedMatch?.players?.find((e) => e.guid == realtimeScore.data.user_guid);
     if (updatedPlayer == undefined) return;
 
-    console.log(realtimeScore);
     updatedPlayer.score = {
       score: realtimeScore.data.score_with_modifiers,
       accuracy: realtimeScore.data.accuracy,
