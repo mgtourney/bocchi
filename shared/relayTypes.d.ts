@@ -13,6 +13,7 @@ export interface Player {
   name: string;
   score?: Score;
   team?: Team;
+  playing?: boolean;
   teamMembersGUIDs?: string[];
 }
 

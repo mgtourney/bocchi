@@ -87,6 +87,11 @@ export default class Relay {
       this.io.emit("state", this.rstate.getState());
     });
 
+    this.ta.on("userUpdated", (event: TAEvents.PacketEvent<Models.User>) => {
+      this.rstate.updateUser(event.data);
+      this.io.emit("state", this.rstate.getState());
+    });
+
     this.ta.on("matchDeleted", (event: TAEvents.PacketEvent<Models.Match>) => {
       this.rstate.deleteMatch(event.data.guid);
       this.io.emit("state", this.rstate.getState());

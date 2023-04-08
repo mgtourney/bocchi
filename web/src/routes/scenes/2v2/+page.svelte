@@ -64,8 +64,10 @@
   }
 
   io.on("state", async ({ teams, players, selectedMatch }: State) => {
+    if (teams == undefined || players == undefined || selectedMatch == undefined) return;
+    if (players[0].playing ?? false) return;
+    
     await tick();
-
     // Set the guids of the players and teams per teams
     //console.log(teams)
     teams?.forEach((team) => {
