@@ -42,5 +42,5 @@
 
 <div class="w-auto h-auto">
   <StreamView bind:twitchName bind:scale bind:muted style={styling()}/>
-  <PlayerInfo bind:playerName bind:flipped bind:accuracy bind:missCount bind:playerId={steamId}/>
+  <PlayerInfo bind:flipped bind:accuracy bind:missCount bind:playerId={steamId}/>
 </div>
