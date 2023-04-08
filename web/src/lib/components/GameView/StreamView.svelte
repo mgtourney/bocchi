@@ -11,8 +11,7 @@
 
   // Wait a random amount of time before loading the iframe (500ms to 1000)
   setTimeout(() => {
-    overlaySrc =
-      "https://player.twitch.tv/?channel={twitchName}&height={height}&width={width}&parent=overlay.magnesium.gg&autoplay=true&muted={muted}&controls=false";
+    overlaySrc =`https://player.twitch.tv/?channel=${twitchName}&height=${height}&width=${width}&parent=overlay.magnesium.gg&autoplay=true&muted=${muted}&controls=false`;
   }, Math.random() * 5000);
 </script>
 
