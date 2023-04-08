@@ -149,10 +149,10 @@
     <div class="flex-col">
       {#if team1 !== undefined}
         <GameView
-          playerName={localPlayers.get(player1)?.name}
-          accuracy={Math.round((localPlayers.get(player1)?.score?.accuracy ?? 1) * 10000) / 100}
-          missCount={localPlayers.get(player1)?.score?.misscount ?? 0}
-          steamId={localPlayers.get(player1)?.steamid}
+          playerName={localPlayers.get(player2)?.name}
+          accuracy={Math.round((localPlayers.get(player2)?.score?.accuracy ?? 1) * 10000) / 100}
+          missCount={localPlayers.get(player2)?.score?.misscount ?? 0}
+          steamId={localPlayers.get(player2)?.steamid}
           scale={globalScale}
           muted={false}
         />
@@ -188,10 +188,10 @@
     <div class="flex-col">
       {#if team2 !== undefined}
         <GameView
-          playerName={localPlayers.get(player2)?.name}
-          accuracy={Math.round((localPlayers.get(player2)?.score?.accuracy ?? 1) * 10000) / 100}
-          missCount={localPlayers.get(player2)?.score?.misscount ?? 0}
-          steamId={localPlayers.get(player2)?.steamid}
+          playerName={localPlayers.get(player1)?.name}
+          accuracy={Math.round((localPlayers.get(player1)?.score?.accuracy ?? 1) * 10000) / 100}
+          missCount={localPlayers.get(player1)?.score?.misscount ?? 0}
+          steamId={localPlayers.get(player1)?.steamid}
           scale={globalScale}
           muted={true}
           flipped={true}
