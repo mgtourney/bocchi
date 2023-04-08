@@ -11,7 +11,7 @@
 <iframe
   id="{twitchName}-twitch"
   title="{twitchName}'s stream"
-  src="https://player.twitch.tv/?channel={twitchName}&height={height}&width={width}&parent=localhost&autoplay=true&muted={muted}&controls=false"
+  src="https://player.twitch.tv/?channel={twitchName}&height={height}&width={width}&parent=magnesium.gg&autoplay=true&muted={muted}&controls=false"
   {height}
   {width}
   frameborder="0"
