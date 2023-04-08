@@ -151,7 +151,7 @@
         <GameView
           playerName={localPlayers.get(player1)?.name}
           accuracy={Math.round((localPlayers.get(player1)?.score?.accuracy ?? 1) * 10000) / 100}
-          missCount={localPlayers.get(player1)?.score?.misscount ?? 0}
+          missCount={localPlayers.get(player1)?.score?.totalmisscount ?? 0}
           steamId={localPlayers.get(player1)?.steamid}
           scale={globalScale}
           muted={false}
@@ -159,7 +159,7 @@
         <GameView
           playerName={localPlayers.get(player2)?.name}
           accuracy={Math.round((localPlayers.get(player2)?.score?.accuracy ?? 1) * 10000) / 100}
-          missCount={localPlayers.get(player2)?.score?.misscount ?? 0}
+          missCount={localPlayers.get(player2)?.score?.totalmisscount ?? 0}
           steamId={localPlayers.get(player2)?.steamid}
           scale={globalScale}
           muted={true}
@@ -190,7 +190,7 @@
         <GameView
           playerName={localPlayers.get(player3)?.name}
           accuracy={Math.round((localPlayers.get(player3)?.score?.accuracy ?? 1) * 10000) / 100}
-          missCount={localPlayers.get(player3)?.score?.misscount ?? 0}
+          missCount={localPlayers.get(player3)?.score?.totalmisscount ?? 0}
           steamId={localPlayers.get(player3)?.steamid}
           scale={globalScale}
           muted={true}
@@ -199,7 +199,7 @@
         <GameView
           playerName={localPlayers.get(player4)?.name}
           accuracy={Math.round((localPlayers.get(player4)?.score?.accuracy ?? 1) * 10000) / 100}
-          missCount={localPlayers.get(player4)?.score?.misscount ?? 0}
+          missCount={localPlayers.get(player4)?.score?.totalmisscount ?? 0}
           steamId={localPlayers.get(player4)?.steamid}
           scale={globalScale}
           muted={true}
