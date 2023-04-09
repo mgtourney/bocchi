@@ -5,7 +5,7 @@
 
   // Spring only diff so that the bar doesn't shift around if the diff changes rapidly around 0
   let barDiff = spring(0);
-  $: barDiff.set(diff * 4);
+  $: barDiff.set(diff * 10);
 
   let barLengthR = 0;
   let barLengthL = 0;
@@ -17,10 +17,9 @@
 </script>
 
 <div class="flex flex-col items-center w-full">
-  <div class="text-sm font-medium text-gray-500 mb-1">DIFFERENCE</div>
   <div class="flex w-full h-3">
     <div class="bg-bar" style:width={`${barLengthL}%`} />
-    <div class="flex-grow {diff < 0 ? 'bg-blue-700' : 'bg-orange-700'}" />
+    <div class="flex-grow {diff >= 0 ? 'bg-blue-500' : 'bg-orange-500'}" />
     <div class="bg-bar" style:width={`${barLengthR}%`} />
   </div>
 </div>
