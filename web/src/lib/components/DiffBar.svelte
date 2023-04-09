@@ -10,19 +10,20 @@
   let barLengthR = 0;
   let barLengthL = 0;
 
-  $: barLengthR = (($barDiff >= 0) ? (100 - $barDiff) / 2 : 50);
-  $: barLengthL = (($barDiff < 0) ? (100 - Math.abs($barDiff)) / 2 : 50);
-  
+  $: barLengthR = $barDiff >= 0 ? (100 - $barDiff) / 2 : 50;
+  $: barLengthL = $barDiff < 0 ? (100 - Math.abs($barDiff)) / 2 : 50;
+
   $: tick();
 </script>
 
 <div class="flex w-full h-3">
-  <div class="bg-bar" style:width={`${barLengthL}%`}/>
-  <div class="flex-grow {diff < 0 ? "bg-blue-600": "bg-orange-600"}"/>
-  <div class="bg-bar" style:width={`${barLengthR}%`}/>
+  <div class="bg-bar" style:width={`${barLengthL * 8}%`} />
+  <div class="flex-grow {diff < 0 ? 'bg-blue-600' : 'bg-orange-600'}" />
+  <div class="bg-bar" style:width={`${barLengthR * 8}%`} />
 </div>
+
 <style>
   .bg-bar {
-    background: #FFFFFF40;
+    background: #ffffff40;
   }
 </style>
