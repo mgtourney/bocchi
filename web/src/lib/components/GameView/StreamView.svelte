@@ -1,7 +1,7 @@
 <script lang="ts">
   export let twitchName = "bobross";
   export let scale: number = 1;
-  export let muted: boolean = true;
+  export let muted: boolean;
   export let style: string;
 
   let width = 1920 * scale;

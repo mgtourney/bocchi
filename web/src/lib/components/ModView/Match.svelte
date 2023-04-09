@@ -101,7 +101,6 @@
     });
   }
 
-
   let int: NodeJS.Timer;
 
   onMount(() => {
@@ -117,8 +116,8 @@
   });
 
 
-  function activateScene(event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement; }) {
-    throw new Error("Function not implemented.");
+  function toggleMute(event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement; }) {
+    io.emit("toggleMute");
   }
 </script>
 
@@ -198,5 +197,9 @@
       class="flex items-center justify-center w-[25vw] p-2 text-5xl text-white bg-purple-500 rounded text-bold"
       on:click={redirectToPost}>Post 2v2</button
     >
+
+    <button
+      class="flex items-center justify-center w-[25vw] p-2 text-5xl text-white bg-purple-500 rounded text-bold"
+      on:click={toggleMute}>Toggle Mute</button>
   </div>
 </div>

@@ -68,6 +68,7 @@
     if (players[0].playing ?? false) return;
     
     await tick();
+
     // Set the guids of the players and teams per teams
     //console.log(teams)
     teams?.forEach((team) => {
@@ -123,6 +124,11 @@
     diff = ((localTeams.get(team2)?.score?.accuracy ?? 1) - (localTeams.get(team1)?.score?.accuracy ?? 1)) * 100;
   });
 
+  let muted = false;
+  io.on("toggleMute", () => {
+    muted = !muted;
+  });
+
   let int: NodeJS.Timer;
 
   onMount(() => {
@@ -149,15 +155,13 @@
     <div class="flex-col">
       {#if team1 !== undefined}
         <GameView
-          playerName={localPlayers.get(player1)?.name}
           accuracy={Math.round((localPlayers.get(player1)?.score?.accuracy ?? 1) * 10000) / 100}
           missCount={localPlayers.get(player1)?.score?.totalmisscount ?? 0}
           steamId={localPlayers.get(player1)?.steamid}
           scale={globalScale}
-          muted={false}
+          muted={muted}
         />
         <GameView
-          playerName={localPlayers.get(player2)?.name}
           accuracy={Math.round((localPlayers.get(player2)?.score?.accuracy ?? 1) * 10000) / 100}
           missCount={localPlayers.get(player2)?.score?.totalmisscount ?? 0}
           steamId={localPlayers.get(player2)?.steamid}
@@ -188,7 +192,6 @@
     <div class="flex-col">
       {#if team2 !== undefined}
         <GameView
-          playerName={localPlayers.get(player3)?.name}
           accuracy={Math.round((localPlayers.get(player3)?.score?.accuracy ?? 1) * 10000) / 100}
           missCount={localPlayers.get(player3)?.score?.totalmisscount ?? 0}
           steamId={localPlayers.get(player3)?.steamid}
@@ -197,7 +200,6 @@
           flipped={true}
         />
         <GameView
-          playerName={localPlayers.get(player4)?.name}
           accuracy={Math.round((localPlayers.get(player4)?.score?.accuracy ?? 1) * 10000) / 100}
           missCount={localPlayers.get(player4)?.score?.totalmisscount ?? 0}
           steamId={localPlayers.get(player4)?.steamid}

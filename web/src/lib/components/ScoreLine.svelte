@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let points: Number = 0;
+  export let points: number = 0;
 </script>
 
 <div>
