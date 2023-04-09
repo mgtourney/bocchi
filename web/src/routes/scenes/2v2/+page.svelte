@@ -129,6 +129,16 @@
     muted = !muted;
   });
 
+  let spin = false;
+  io.on("effect", (data) => {
+    if (data === "spin") {
+      spin = true;
+      setTimeout(() => {
+        spin = false;
+      }, 1000);
+    }
+  });
+
   let int: NodeJS.Timer;
 
   onMount(() => {
@@ -152,7 +162,7 @@
 <div class="flex-col w-full h-full">
   <DiffBar bind:diff />
   <div class="flex items-center justify-center">
-    <div class="flex-col">
+    <div class="flex-col {spin ? 'animate-spin' : ''}">
       {#if team1 !== undefined}
         <GameView
           accuracy={Math.round((localPlayers.get(player1)?.score?.accuracy ?? 1) * 10000) / 100}
@@ -189,7 +199,7 @@
       </div>
     </div>
 
-    <div class="flex-col">
+    <div class="flex-col {spin ? 'animate-spin' : ''}">
       {#if team2 !== undefined}
         <GameView
           accuracy={Math.round((localPlayers.get(player3)?.score?.accuracy ?? 1) * 10000) / 100}
