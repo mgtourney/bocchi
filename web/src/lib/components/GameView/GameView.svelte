@@ -28,28 +28,23 @@
 }
   `
 
+  let spin = false;
+  io.on("effect", (data) => {
+    if (data === "spin") {
+      spin = true;
+      setTimeout(() => {
+        spin = false;
+      }, 1000);
+    }
+  });
+
   const styling = () => {
     let base = "border-[#FFFFFF30] border-b-[5px] ";
     let side = flipped ? "border-l-[9px]" : "border-r-[9px]";
     let roundCorner = flipped ? " rounded-bl-[38px]" : " rounded-br-[38px]";
-    return bottom ? base + side + roundCorner : base + side;
+    return bottom ? base + side + roundCorner : base + side + spin ? " animate-spin" : "";
   }
 
-  io.on("effect", (data: any) => {
-    switch (data.effect) {
-      case "spin":
-        let gameview = document.getElementById("gameview");
-        gameview?.classList.add("animate-spin");
-        setTimeout(() => {
-          gameview?.classList.remove("animate-spin");
-        }, 1000);
-
-        break;
-
-      default:
-        break;
-    }
-  });
 
   GQL.request(twitch_query, { where: { steam: steamId } }).then((val: any) => {
     // console.log(val);

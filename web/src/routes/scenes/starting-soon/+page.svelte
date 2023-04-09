@@ -58,13 +58,23 @@
     }, 1000);
   });
 
+  let spin = false;
+  io.on("effect", (data) => {
+    if (data === "spin") {
+      spin = true;
+      setTimeout(() => {
+        spin = false;
+      }, 1000);
+    }
+  });
+
   onDestroy(() => {
     clearInterval(int);
   });
 </script>
 
 <div class="flex flex-col justify-center items-center h-[100vh]">
-  <div class="bg-black bg-opacity-70 p-16 rounded-xl text-center text-white">
+  <div class="bg-black bg-opacity-70 p-16 rounded-xl text-center text-white {spin ? 'animate-spin' : ''}">
     <p class="text-8xl font-bold">Starting Soon</p>
     <p class="text-[9rem] font-bold {getAnimation(minutes, seconds)}">
       {minutes < 10 ? "0" + minutes : minutes}:{seconds < 10
