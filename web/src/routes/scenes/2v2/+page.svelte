@@ -202,6 +202,7 @@
     <div class="flex-col {spin ? 'animate-spin' : ''}">
       {#if team2 !== undefined}
         <GameView
+        
           accuracy={Math.round((localPlayers.get(player3)?.score?.accuracy ?? 1) * 10000) / 100}
           missCount={localPlayers.get(player3)?.score?.totalmisscount ?? 0}
           steamId={localPlayers.get(player3)?.steamid}
